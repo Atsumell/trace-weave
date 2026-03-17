@@ -1,0 +1,20 @@
+{
+	"name": "trace-weave-test-author",
+	"version": "0.1.0",
+	"entry": "SKILL.md",
+	"targetAgents": ["codex", "claude-code"],
+	"traceWeaveCompatibility": "^0.1.0",
+	"language": "en",
+	"companionDocs": [
+		{
+			"locale": "ja",
+			"path": "../../docs/skills.ja.md"
+		}
+	],
+	"references": [
+		"references/pattern-selection.md",
+		"references/runtime-contracts.md",
+		"references/test-templates.md",
+		"references/diagnostics.md"
+	]
+}

@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-`src/` contains the published TypeScript modules: `core`, `builder`, `compiler`, `monitor`, `patterns`, `fast-check`, `vitest`, and `ai`. Keep public entrypoints in each module’s `index.ts`. `tests/` mirrors the source layout with Vitest specs such as `tests/compiler/compile.test.ts`. `docs/` holds user-facing package documentation, and `tasks/` stores lightweight project notes like [`tasks/todo.md`](/Users/rizumita/Workspace/Atsumell/trace-weave/tasks/todo.md). `dist/` is generated output from `tsup`; do not hand-edit it.
+`src/` contains the published TypeScript modules: `core`, `builder`, `compiler`, `monitor`, `patterns`, `fast-check`, `vitest`, and `ai`. Keep public entrypoints in each module’s `index.ts`. `tests/` mirrors the source layout with Vitest specs such as `tests/compiler/compile.test.ts`. `docs/` holds user-facing package documentation, `skills/` contains installable AI-agent skills plus metadata, and `tasks/` stores lightweight project notes like [`tasks/todo.md`](/Users/rizumita/Workspace/Atsumell/trace-weave/tasks/todo.md). `dist/` is generated output from `tsup`; do not hand-edit it.
 
 ## Build, Test, and Development Commands
 Use Node.js 20+.
@@ -10,6 +10,7 @@ Use Node.js 20+.
 - `npm test`: run the full Vitest suite once.
 - `npm run test:watch`: run tests in watch mode during development.
 - `npm run lint`: run Biome checks across the repository.
+- `npm run skills:validate`: validate packaged skills, metadata, and referenced docs.
 - `npm run lint:fix`: apply safe Biome fixes.
 - `npm run format`: format source, tests, and docs with Biome.
 
@@ -24,6 +25,7 @@ Git history is not available in this workspace snapshot, so no repository-specif
 
 ## Contributor Notes
 Treat `dist/` as build output. When adding a new public surface, update `package.json` exports, `tsup.config.ts` entries, tests, and the relevant document in `docs/`.
+Skill changes must also update `skills/*/skill.json`, `npm run skills:validate`, and the install guide in `docs/skills.md`.
 
 ## Documentation & Localization
 Keep the primary documentation in English. For key entry documents, add or update Japanese companion files using the `*.ja.md` naming pattern, for example `README.ja.md` or `docs/getting-started.ja.md`. When an English source page changes materially, update its Japanese companion in the same change or explicitly remove stale links until the translation is refreshed.
