@@ -23,30 +23,36 @@ if (!tarballName) {
 execFileSync("tar", ["-xzf", path.join(tempRoot, tarballName), "-C", tempRoot], { cwd: repoRoot });
 
 const packedDir = path.join(tempRoot, "package");
-const consumerDir = path.join(tempRoot, "consumer");
-const consumerNodeModules = path.join(consumerDir, "node_modules");
 
-mkdirSync(consumerNodeModules, { recursive: true });
-cpSync(packedDir, path.join(consumerNodeModules, "trace-weave"), { recursive: true });
+function createConsumer(name, dependencies = []) {
+	const consumerDir = path.join(tempRoot, name);
+	const consumerNodeModules = path.join(consumerDir, "node_modules");
 
-for (const dependency of ["fast-check", "vitest"]) {
-	const dependencyPath = path.join(repoRoot, "node_modules", dependency);
-	if (existsSync(dependencyPath)) {
-		symlinkSync(dependencyPath, path.join(consumerNodeModules, dependency), "dir");
+	mkdirSync(consumerNodeModules, { recursive: true });
+	cpSync(packedDir, path.join(consumerNodeModules, "trace-weave"), { recursive: true });
+
+	for (const dependency of dependencies) {
+		const dependencyPath = path.join(repoRoot, "node_modules", dependency);
+		if (existsSync(dependencyPath)) {
+			symlinkSync(dependencyPath, path.join(consumerNodeModules, dependency), "dir");
+		}
 	}
+
+	return consumerDir;
 }
 
+const baselineConsumerDir = createConsumer("consumer-baseline");
+
 writeFileSync(
-	path.join(consumerDir, "check.mjs"),
+	path.join(baselineConsumerDir, "check.mjs"),
 	[
-		"const [core, builder, compiler, monitor, patterns, ai, fastCheck] = await Promise.all([",
+		"const [core, builder, compiler, monitor, patterns, ai] = await Promise.all([",
 		'\timport("trace-weave/core"),',
 		'\timport("trace-weave/builder"),',
 		'\timport("trace-weave/compiler"),',
 		'\timport("trace-weave/monitor"),',
 		'\timport("trace-weave/patterns"),',
 		'\timport("trace-weave/ai"),',
-		'\timport("trace-weave/fast-check"),',
 		"]);",
 		'if (typeof core.predicateId !== "function") throw new Error("core export missing");',
 		'if (typeof builder.always !== "function") throw new Error("builder export missing");',
@@ -54,14 +60,30 @@ writeFileSync(
 		'if (typeof monitor.runOracle !== "function") throw new Error("monitor export missing");',
 		'if (typeof patterns.response !== "function") throw new Error("patterns export missing");',
 		'if (typeof ai.formatReport !== "function") throw new Error("ai export missing");',
+		'console.log("baseline import smoke passed");',
+		"",
+	].join("\n"),
+);
+
+execFileSync("node", ["check.mjs"], {
+	cwd: baselineConsumerDir,
+	stdio: "inherit",
+});
+
+const optionalConsumerDir = createConsumer("consumer-optional", ["fast-check", "vitest"]);
+
+writeFileSync(
+	path.join(optionalConsumerDir, "check.mjs"),
+	[
+		'const [fastCheck] = await Promise.all([import("trace-weave/fast-check")]);',
 		'if (typeof fastCheck.traceProperty !== "function") throw new Error("fast-check export missing");',
-		'console.log("node import smoke passed");',
+		'console.log("optional import smoke passed");',
 		"",
 	].join("\n"),
 );
 
 writeFileSync(
-	path.join(consumerDir, "vitest-smoke.test.mjs"),
+	path.join(optionalConsumerDir, "vitest-smoke.test.mjs"),
 	[
 		'import { describe, expect, it } from "vitest";',
 		'import { installMatchers } from "trace-weave/vitest";',
@@ -89,7 +111,7 @@ writeFileSync(
 );
 
 execFileSync("node", ["check.mjs"], {
-	cwd: consumerDir,
+	cwd: optionalConsumerDir,
 	stdio: "inherit",
 });
 
@@ -97,7 +119,7 @@ execFileSync(
 	"node",
 	[path.join(repoRoot, "node_modules", "vitest", "vitest.mjs"), "run", "vitest-smoke.test.mjs"],
 	{
-		cwd: consumerDir,
+		cwd: optionalConsumerDir,
 		stdio: "inherit",
 	},
 );

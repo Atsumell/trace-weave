@@ -29,6 +29,7 @@ import {
 	createMonitor,
 	evaluateStep,
 	finalize,
+	finalizeEmpty,
 	runOracle,
 } from "../../src/monitor/index.js";
 
@@ -73,10 +74,6 @@ function runOnline(
 	formula: FormulaExpr,
 	trace: readonly TestEvent[],
 ): { readonly verdict: Verdict; readonly report: ReturnType<typeof buildReport<TestEvent>> } {
-	if (trace.length === 0) {
-		throw new Error("runOnline requires a non-empty trace");
-	}
-
 	const compiled = prepare(compile(formula));
 	const monitor = createMonitor(compiled, runtime);
 
@@ -84,7 +81,8 @@ function runOnline(
 		evaluateStep(monitor, step);
 	}
 
-	const verdict = finalize(monitor, trace[trace.length - 1]!);
+	const verdict =
+		trace.length === 0 ? finalizeEmpty(monitor) : finalize(monitor, trace[trace.length - 1]!);
 	return {
 		verdict,
 		report: buildReport(monitor, trace),
@@ -100,6 +98,12 @@ function stepVerdicts(formula: FormulaExpr, trace: readonly TestEvent[]): readon
 describe("online monitor parity", () => {
 	it.each([
 		{
+			name: "always on empty trace",
+			formula: always(predicate(isA)),
+			trace: [],
+			expected: "satisfied",
+		},
+		{
 			name: "always satisfied",
 			formula: always(predicate(isA)),
 			trace: [event(["a"]), event(["a"])],
@@ -112,15 +116,33 @@ describe("online monitor parity", () => {
 			expected: "violated",
 		},
 		{
+			name: "eventually on empty trace",
+			formula: eventually(predicate(isB)),
+			trace: [],
+			expected: "violated",
+		},
+		{
 			name: "eventually satisfied",
 			formula: eventually(predicate(isB)),
 			trace: [event(["a"]), event(["b"])],
 			expected: "satisfied",
 		},
 		{
+			name: "next on empty trace",
+			formula: next(predicate(isB)),
+			trace: [],
+			expected: "violated",
+		},
+		{
 			name: "next on successor",
 			formula: next(predicate(isB)),
 			trace: [event(["a"]), event(["b"])],
+			expected: "satisfied",
+		},
+		{
+			name: "weakNext on empty trace",
+			formula: weakNext(predicate(isB)),
+			trace: [],
 			expected: "satisfied",
 		},
 		{
@@ -142,6 +164,12 @@ describe("online monitor parity", () => {
 			expected: "satisfied",
 		},
 		{
+			name: "release violated when right fails before left can discharge it",
+			formula: release(predicate(isA), predicate(isB)),
+			trace: [event(["c"])],
+			expected: "violated",
+		},
+		{
 			name: "once via implication",
 			formula: always(implies(predicate(isB), once(predicate(isA)))),
 			trace: [event(["a"]), event(["b"])],
@@ -160,6 +188,12 @@ describe("online monitor parity", () => {
 			expected: "satisfied",
 		},
 		{
+			name: "since via implication violated when the witness never appears",
+			formula: always(implies(predicate(isB), since(literal(true), predicate(isA)))),
+			trace: [event(["c"]), event(["b"])],
+			expected: "violated",
+		},
+		{
 			name: "withinSteps",
 			formula: withinSteps(2, predicate(isB)),
 			trace: [event(["a"]), event(["b"])],
@@ -176,6 +210,11 @@ describe("online monitor parity", () => {
 
 		expect(batch.verdict).toBe(expected);
 		expect(online.verdict).toBe(expected);
+	});
+
+	it("requires finalizeEmpty for empty monitors", () => {
+		const monitor = createMonitor(prepare(compile(always(predicate(isA)))), runtime);
+		expect(() => finalize(monitor, event(["a"]))).toThrowError(/finalizeEmpty/);
 	});
 
 	it("keeps capture/when verdicts aligned across satisfied and violated traces", () => {
@@ -271,6 +310,18 @@ describe("online monitor parity", () => {
 			formula: release(predicate(isA), predicate(isB)),
 			trace: [event(["a", "b"])],
 			expected: ["satisfied"],
+		},
+		{
+			name: "release becomes violated as soon as right fails",
+			formula: release(predicate(isA), predicate(isB)),
+			trace: [event(["c"])],
+			expected: ["violated"],
+		},
+		{
+			name: "since via implication becomes violated when the witness never appears",
+			formula: always(implies(predicate(isB), since(literal(true), predicate(isA)))),
+			trace: [event(["c"]), event(["b"])],
+			expected: ["pending", "violated"],
 		},
 		{
 			name: "withinSteps becomes violated once the observed budget expires",

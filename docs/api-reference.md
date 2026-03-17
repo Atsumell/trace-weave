@@ -312,6 +312,10 @@ function finalize<TEvent>(
   lastEvent: TEvent,
 ): Verdict;
 
+function finalizeEmpty<TEvent>(
+  state: MonitorState<TEvent>,
+): Verdict;
+
 function buildReport<TEvent>(
   state: MonitorState<TEvent>,
   trace: readonly TEvent[],
@@ -319,6 +323,7 @@ function buildReport<TEvent>(
 ```
 
 `createMonitor` rejects `withinMs` formulas only when `runtime.timestamp` is missing.
+Use `finalize` after at least one `evaluateStep` call. Use `finalizeEmpty` when the monitor has observed no events.
 
 ---
 

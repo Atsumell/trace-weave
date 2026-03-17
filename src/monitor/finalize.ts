@@ -4,17 +4,39 @@ import { evaluateFormula } from "./evaluate.js";
 import type { MonitorState } from "./types.js";
 
 export function finalize<TEvent>(state: MonitorState<TEvent>, lastEvent: TEvent): Verdict {
+	void lastEvent;
+
 	if (state.finalized) {
-		return (
-			state.finalVerdict ?? state.activations.get(state.rootActivationId)?.verdict ?? "pending"
+		return getFinalizedVerdict(state);
+	}
+
+	if (state.trace.length === 0) {
+		throw new Error(
+			"Cannot finalize an empty monitor with finalize(); use finalizeEmpty() instead",
 		);
 	}
 
-	state.finalized = true;
+	return finalizeObservedTrace(state);
+}
 
-	if (state.trace.length === 0) {
-		state.trace.push(lastEvent);
+export function finalizeEmpty<TEvent>(state: MonitorState<TEvent>): Verdict {
+	if (state.finalized) {
+		return getFinalizedVerdict(state);
 	}
+
+	if (state.trace.length > 0) {
+		throw new Error("Cannot finalize a non-empty monitor with finalizeEmpty(); use finalize()");
+	}
+
+	return finalizeObservedTrace(state);
+}
+
+function getFinalizedVerdict<TEvent>(state: MonitorState<TEvent>): Verdict {
+	return state.finalVerdict ?? state.activations.get(state.rootActivationId)?.verdict ?? "pending";
+}
+
+function finalizeObservedTrace<TEvent>(state: MonitorState<TEvent>): Verdict {
+	state.finalized = true;
 
 	const verdict = evaluateFormula(state.compiled.document, state.runtime, state.trace);
 	state.finalVerdict = verdict;

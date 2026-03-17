@@ -12,6 +12,7 @@ import {
 	or,
 	predicate,
 	release,
+	since,
 	until,
 	weakNext,
 	withinMs,
@@ -194,9 +195,16 @@ describe("runOracle", () => {
 			expect(result.verdict).toBe("satisfied");
 		});
 
-		it("satisfied when left and right both hold at some point", () => {
-			const result = runOracle(release(predicate(pId), predicate(qId)), runtime, [{ type: "B" }]);
+		it("satisfied when left is trivially true and right holds at the current step", () => {
+			const result = runOracle(release(literal(true), predicate(qId)), runtime, [{ type: "B" }]);
 			expect(result.verdict).toBe("satisfied");
+		});
+
+		it("violated when right fails before left ever holds", () => {
+			const result = runOracle(release(predicate(pId), predicate(qId)), runtime, [
+				{ type: "C" } as TestEvent,
+			]);
+			expect(result.verdict).toBe("violated");
 		});
 	});
 
@@ -226,6 +234,24 @@ describe("runOracle", () => {
 				{ type: "B" },
 				{ type: "A" },
 			]);
+			expect(result.verdict).toBe("violated");
+		});
+
+		it("since: satisfied when the witness has occurred before the trigger", () => {
+			const result = runOracle(
+				always(implies(predicate(qId), since(literal(true), predicate(pId)))),
+				runtime,
+				[{ type: "A" }, { type: "B" }],
+			);
+			expect(result.verdict).toBe("satisfied");
+		});
+
+		it("since: violated when the witness never occurred before the trigger", () => {
+			const result = runOracle(
+				always(implies(predicate(qId), since(literal(true), predicate(pId)))),
+				runtime,
+				[{ type: "C" } as TestEvent, { type: "B" }],
+			);
 			expect(result.verdict).toBe("violated");
 		});
 	});

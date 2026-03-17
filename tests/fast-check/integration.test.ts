@@ -60,7 +60,31 @@ describe("fast-check integration", () => {
 		}
 	});
 
-	it("commandAdapter records model snapshots for executed commands", () => {
+	it("commandAdapter omits commands whose preconditions fail", () => {
+		const blockedDecrement: fc.Command<CounterModel, RealCounter> = {
+			check: (model) => model.count > 0,
+			run: (model, real) => {
+				model.count -= 1;
+				real.decrement();
+			},
+			toString: () => "decrement",
+		};
+
+		const traces = fc.sample(
+			commandAdapter({
+				commands: [fc.constant(blockedDecrement)],
+				initialModel: () => ({ count: 0 }),
+				initialReal: () => new RealCounter(),
+			}),
+			20,
+		);
+
+		for (const events of traces) {
+			expect(events).toEqual([]);
+		}
+	});
+
+	it("commandAdapter records exact before/after model snapshots for executed commands", () => {
 		const increment: fc.Command<CounterModel, RealCounter> = {
 			check: () => true,
 			run: (model, real) => {
@@ -79,22 +103,35 @@ describe("fast-check integration", () => {
 			toString: () => "decrement",
 		};
 
-		const sample = fc
-			.sample(
-				commandAdapter({
-					commands: [fc.constant(increment), fc.constant(decrement)],
-					initialModel: () => ({ count: 0 }),
-					initialReal: () => new RealCounter(),
-				}),
-				10,
-			)
-			.find((events) => events.length > 0);
+		const traces = fc.sample(
+			commandAdapter({
+				commands: [fc.constant(increment), fc.constant(decrement)],
+				initialModel: () => ({ count: 0 }),
+				initialReal: () => new RealCounter(),
+			}),
+			50,
+		);
 
-		expect(sample).toBeDefined();
-		expect(sample?.length).toBeGreaterThan(0);
-		expect(sample?.[0]?.type).toBeDefined();
-		expect(sample?.[0]?.modelBefore).toBeDefined();
-		expect(sample?.[0]?.modelAfter).toBeDefined();
+		expect(traces.some((events) => events.length > 0)).toBe(true);
+
+		for (const events of traces) {
+			for (let index = 0; index < events.length; index++) {
+				const current = events[index]!;
+				const previousAfter =
+					index === 0 ? 0 : (events[index - 1]?.modelAfter as CounterModel).count;
+				const before = (current.modelBefore as CounterModel).count;
+				const after = (current.modelAfter as CounterModel).count;
+
+				expect(before).toBe(previousAfter);
+				if (current.type === "increment") {
+					expect(after).toBe(before + 1);
+				} else {
+					expect(current.type).toBe("decrement");
+					expect(before).toBeGreaterThan(0);
+					expect(after).toBe(before - 1);
+				}
+			}
+		}
 	});
 
 	it("traceProperty passes satisfied traces and fails violated traces", () => {
@@ -120,5 +157,12 @@ describe("fast-check integration", () => {
 		const property = commandProperty(formula, runtime, fc.constant([{ tags: ["ok"] }]));
 
 		expect(() => fc.assert(property, { numRuns: 1 })).not.toThrow();
+	});
+
+	it("commandProperty fails when the adapted trace violates the formula", () => {
+		const formula = always(predicate(isOk));
+		const property = commandProperty(formula, runtime, fc.constant([{ tags: ["bad"] }]));
+
+		expect(() => fc.assert(property, { numRuns: 1 })).toThrowError(/Formula violated/);
 	});
 });

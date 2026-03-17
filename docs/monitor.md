@@ -135,7 +135,7 @@ The online monitor requires the same timestamp contract for `withinMs`. Creating
 
 ```typescript
 import { compile, prepare } from "trace-weave/compiler";
-import { createMonitor, evaluateStep, finalize } from "trace-weave/monitor";
+import { createMonitor, evaluateStep, finalize, finalizeEmpty } from "trace-weave/monitor";
 
 const doc = compile(formula);
 const compiled = prepare(doc);
@@ -160,13 +160,19 @@ The monitor maintains internal state including:
 
 ### Finalizing
 
-When the trace is complete, call `finalize` to apply end-of-trace semantics:
+When the trace is complete, call `finalize` to apply end-of-trace semantics for a non-empty trace:
 
 ```typescript
 const finalVerdict = finalize(monitor, lastEvent);
 ```
 
-Finalize resolves the monitor against the complete observed trace using the batch evaluator. This gives the same final verdict as `runOracle` on the same formula and trace, and it applies the trace-end rules below:
+If no events were observed, call `finalizeEmpty` instead:
+
+```typescript
+const finalVerdict = finalizeEmpty(monitor);
+```
+
+Both functions resolve the monitor against the complete observed trace using the batch evaluator. This gives the same final verdict as `runOracle` on the same formula and trace, and it applies the trace-end rules below:
 
 | Operator    | During trace | At trace end     |
 |-------------|-------------|------------------|
