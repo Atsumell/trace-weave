@@ -212,9 +212,16 @@ describe("online monitor parity", () => {
 		expect(online.verdict).toBe(expected);
 	});
 
-	it("requires finalizeEmpty for empty monitors", () => {
-		const monitor = createMonitor(prepare(compile(always(predicate(isA)))), runtime);
-		expect(() => finalize(monitor, event(["a"]))).toThrowError(/finalizeEmpty/);
+	it("preserves legacy finalize(emptyMonitor, lastEvent) behavior for backward compatibility", () => {
+		const formula = always(predicate(isA));
+		const satisfiedMonitor = createMonitor(prepare(compile(formula)), runtime);
+		const violatedMonitor = createMonitor(prepare(compile(formula)), runtime);
+
+		expect(finalize(satisfiedMonitor, event(["a"]))).toBe("satisfied");
+		expect(finalize(violatedMonitor, event(["c"]))).toBe("violated");
+		expect(buildReport(violatedMonitor, [])?.traceSlice).toEqual([
+			{ step: 1, event: event(["c"]) },
+		]);
 	});
 
 	it("keeps capture/when verdicts aligned across satisfied and violated traces", () => {

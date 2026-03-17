@@ -323,7 +323,8 @@ function buildReport<TEvent>(
 ```
 
 `createMonitor` rejects `withinMs` formulas only when `runtime.timestamp` is missing.
-Use `finalize` after at least one `evaluateStep` call. Use `finalizeEmpty` when the monitor has observed no events.
+`finalize` remains backward-compatible: on an empty monitor it resolves a single-event trace using the provided `lastEvent`.
+Use `finalizeEmpty` when the monitor should be resolved against a genuinely empty trace.
 
 ---
 

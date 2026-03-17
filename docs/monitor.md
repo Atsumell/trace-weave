@@ -160,17 +160,19 @@ The monitor maintains internal state including:
 
 ### Finalizing
 
-When the trace is complete, call `finalize` to apply end-of-trace semantics for a non-empty trace:
+When the trace is complete, call `finalize` with the last observed event:
 
 ```typescript
 const finalVerdict = finalize(monitor, lastEvent);
 ```
 
-If no events were observed, call `finalizeEmpty` instead:
+For true empty-trace semantics, call `finalizeEmpty` instead:
 
 ```typescript
 const finalVerdict = finalizeEmpty(monitor);
 ```
+
+`finalize` remains backward-compatible with earlier releases: if it is called on an empty monitor, it materializes a single-event trace from the provided `lastEvent`. `finalizeEmpty` is the explicit API for resolving a monitor against a genuinely empty trace.
 
 Both functions resolve the monitor against the complete observed trace using the batch evaluator. This gives the same final verdict as `runOracle` on the same formula and trace, and it applies the trace-end rules below:
 

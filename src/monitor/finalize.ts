@@ -4,16 +4,12 @@ import { evaluateFormula } from "./evaluate.js";
 import type { MonitorState } from "./types.js";
 
 export function finalize<TEvent>(state: MonitorState<TEvent>, lastEvent: TEvent): Verdict {
-	void lastEvent;
-
 	if (state.finalized) {
 		return getFinalizedVerdict(state);
 	}
 
 	if (state.trace.length === 0) {
-		throw new Error(
-			"Cannot finalize an empty monitor with finalize(); use finalizeEmpty() instead",
-		);
+		state.trace.push(lastEvent);
 	}
 
 	return finalizeObservedTrace(state);
