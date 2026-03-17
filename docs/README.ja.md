@@ -8,6 +8,7 @@ English version: [README.md](./README.md)
 
 - [Getting Started 日本語版](./getting-started.ja.md): インストール、runtime、最初の `runOracle`
 - [Examples 日本語版](../examples/README.ja.md): 実行可能なサンプル一覧
+- [AI Skill 日本語版](./skills.ja.md): installable skill の導入方法
 - [API Reference](./api-reference.md): export 一覧と型の詳細
 
 ## 主要ガイド
@@ -22,6 +23,7 @@ English version: [README.md](./README.md)
 - [Vitest Integration](./vitest.md): `toSatisfy` と `toViolate`
 - [fast-check Integration](./fast-check.md): Property-based testing helper
 - [AI Integration](./ai-integration.md): schema、provenance、violation report 整形
+- [AI Skill 日本語版](./skills.ja.md): packaged skill の導入と運用
 
 ## 推奨読書順
 

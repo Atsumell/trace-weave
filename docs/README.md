@@ -15,6 +15,7 @@ English is the primary documentation language. Japanese companion pages are avai
 
 - [Getting Started](./getting-started.md): install the package, define a runtime, and run your first oracle
 - [Examples](../examples/README.md): runnable repository examples for each public module
+- [AI Skill](./skills.md): installable AI-agent skill for generating trace-weave tests
 - [API Reference](./api-reference.md): exported types and functions by module
 
 ## Core Guides
@@ -29,6 +30,7 @@ English is the primary documentation language. Japanese companion pages are avai
 - [Vitest Integration](./vitest.md): `toSatisfy` and `toViolate` matchers
 - [fast-check Integration](./fast-check.md): property-based testing helpers
 - [AI Integration](./ai-integration.md): schema, provenance, and report formatting
+- [AI Skill](./skills.md): installation and maintenance of the packaged skill
 
 ## Recommended Reading Order
 

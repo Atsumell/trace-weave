@@ -7,6 +7,7 @@ Finite-trace temporal test oracle framework based on LTLf for TypeScript.
 `trace-weave` lets you describe temporal properties over event traces and verify them against finite executions. It is designed for cases where single-step assertions are too weak, such as request/response ordering, bounded eventuality, and value correlation across events.
 
 Runnable repository examples live in [examples/README.md](./examples/README.md). The full guide map is in [docs/README.md](./docs/README.md).
+The AI-agent install guide is in [docs/skills.md](./docs/skills.md).
 
 ## Requirements
 
@@ -71,6 +72,7 @@ console.log(result.verdict); // "satisfied"
 
 ```bash
 npm run lint
+npm run skills:validate
 npm run typecheck
 npm test
 npm run build
@@ -82,6 +84,7 @@ npm run pack:smoke
 - [Docs Index](./docs/README.md)
 - [Getting Started](./docs/getting-started.md)
 - [Examples](./examples/README.md)
+- [AI Skill](./docs/skills.md)
 - [Formulas](./docs/formulas.md)
 - [Monitor](./docs/monitor.md)
 - [Patterns](./docs/patterns.md)

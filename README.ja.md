@@ -7,6 +7,7 @@ TypeScript 向けの有限長トレース時相ロジック検証フレームワ
 `trace-weave` はイベント列に対する時系列仕様を記述し、有限実行に対して検証できます。単発のアサーションでは表現しにくい、リクエストとレスポンスの順序、期限付き eventuality、イベント間の値相関の検査を目的にしています。
 
 実行可能なサンプルは [examples/README.ja.md](./examples/README.ja.md) に、ドキュメント全体の入口は [docs/README.ja.md](./docs/README.ja.md) にまとめています。
+AI agent 向けの導入ガイドは [docs/skills.ja.md](./docs/skills.ja.md) にあります。
 
 ## 要件
 
@@ -71,6 +72,7 @@ console.log(result.verdict); // "satisfied"
 
 ```bash
 npm run lint
+npm run skills:validate
 npm run typecheck
 npm test
 npm run build
@@ -82,6 +84,7 @@ npm run pack:smoke
 - [Docs Index 日本語版](./docs/README.ja.md)
 - [Getting Started 日本語版](./docs/getting-started.ja.md)
 - [Examples 日本語版](./examples/README.ja.md)
+- [AI Skill 日本語版](./docs/skills.ja.md)
 - [Monitor 日本語版](./docs/monitor.ja.md)
 - [English Docs Index](./docs/README.md)
 
