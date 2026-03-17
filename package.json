@@ -1,0 +1,82 @@
+{
+	"name": "trace-weave",
+	"version": "0.1.0",
+	"description": "Finite-trace temporal test oracle framework based on LTLf",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Atsumell/trace-weave.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Atsumell/trace-weave/issues"
+	},
+	"homepage": "https://github.com/Atsumell/trace-weave#readme",
+	"type": "module",
+	"exports": {
+		"./core": {
+			"import": "./dist/core/index.js",
+			"types": "./dist/core/index.d.ts"
+		},
+		"./builder": {
+			"import": "./dist/builder/index.js",
+			"types": "./dist/builder/index.d.ts"
+		},
+		"./compiler": {
+			"import": "./dist/compiler/index.js",
+			"types": "./dist/compiler/index.d.ts"
+		},
+		"./monitor": {
+			"import": "./dist/monitor/index.js",
+			"types": "./dist/monitor/index.d.ts"
+		},
+		"./patterns": {
+			"import": "./dist/patterns/index.js",
+			"types": "./dist/patterns/index.d.ts"
+		},
+		"./fast-check": {
+			"import": "./dist/fast-check/index.js",
+			"types": "./dist/fast-check/index.d.ts"
+		},
+		"./vitest": {
+			"import": "./dist/vitest/index.js",
+			"types": "./dist/vitest/index.d.ts"
+		},
+		"./ai": {
+			"import": "./dist/ai/index.js",
+			"types": "./dist/ai/index.d.ts"
+		}
+	},
+	"files": ["dist"],
+	"scripts": {
+		"build": "tsup",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"pack:smoke": "node ./scripts/pack-smoke.mjs"
+	},
+	"peerDependencies": {
+		"fast-check": ">=3.0.0",
+		"vitest": ">=2.0.0"
+	},
+	"peerDependenciesMeta": {
+		"fast-check": {
+			"optional": true
+		},
+		"vitest": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.0",
+		"fast-check": "^3.23.0",
+		"tsup": "^8.3.0",
+		"typescript": "^5.7.0",
+		"vitest": "^2.1.0"
+	},
+	"engines": {
+		"node": ">=20"
+	},
+	"license": "MIT"
+}
