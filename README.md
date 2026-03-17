@@ -1,8 +1,12 @@
 # trace-weave
 
+Japanese version: [README.ja.md](./README.ja.md)
+
 Finite-trace temporal test oracle framework based on LTLf for TypeScript.
 
 `trace-weave` lets you describe temporal properties over event traces and verify them against finite executions. It is designed for cases where single-step assertions are too weak, such as request/response ordering, bounded eventuality, and value correlation across events.
+
+Runnable repository examples live in [examples/README.md](./examples/README.md). The full guide map is in [docs/README.md](./docs/README.md).
 
 ## Requirements
 
@@ -75,10 +79,17 @@ npm run pack:smoke
 
 ## Documentation
 
-- `docs/getting-started.md`
-- `docs/formulas.md`
-- `docs/monitor.md`
-- `docs/api-reference.md`
+- [Docs Index](./docs/README.md)
+- [Getting Started](./docs/getting-started.md)
+- [Examples](./examples/README.md)
+- [Formulas](./docs/formulas.md)
+- [Monitor](./docs/monitor.md)
+- [Patterns](./docs/patterns.md)
+- [Capture](./docs/capture.md)
+- [fast-check Integration](./docs/fast-check.md)
+- [Vitest Integration](./docs/vitest.md)
+- [AI Integration](./docs/ai-integration.md)
+- [API Reference](./docs/api-reference.md)
 
 ## License
 

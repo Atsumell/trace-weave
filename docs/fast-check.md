@@ -2,6 +2,8 @@
 
 trace-weave integrates with [fast-check](https://github.com/dubzzz/fast-check) for property-based testing of temporal properties. This lets you verify that your formulas hold across randomly generated traces.
 
+Runnable example: [`../examples/fast-check-response.mjs`](../examples/fast-check-response.mjs)
+
 ```typescript
 import {
   traceArbitrary, commandAdapter,

@@ -2,6 +2,8 @@
 
 The `trace-weave/ai` module provides utilities for making formula documents and verification results consumable by LLMs (Large Language Models) and other AI systems.
 
+Runnable example: [`../examples/ai-report.mjs`](../examples/ai-report.mjs)
+
 ```typescript
 import {
   formulaDocumentSchema,

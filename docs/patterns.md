@@ -4,6 +4,8 @@ trace-weave provides pre-built temporal specification patterns that encode commo
 
 All patterns are available from `trace-weave/patterns`.
 
+Runnable example: [`../examples/patterns.mjs`](../examples/patterns.mjs)
+
 ```typescript
 import {
   absence, response, boundedResponse, precedence, persistence, stability,

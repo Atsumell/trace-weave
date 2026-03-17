@@ -1,5 +1,7 @@
 # Getting Started
 
+Japanese version: [getting-started.ja.md](./getting-started.ja.md)
+
 trace-weave is a finite-trace temporal test oracle framework based on LTLf (Linear Temporal Logic over finite traces) for TypeScript. It lets you express temporal properties about event traces and verify them programmatically.
 
 ## Installation
@@ -9,6 +11,15 @@ npm install trace-weave
 ```
 
 trace-weave requires Node.js 20 or later. It ships as ESM only.
+
+## Runnable Examples
+
+If you are working from the repository, build once and then run the examples from [../examples/README.md](../examples/README.md):
+
+```bash
+npm run build
+node examples/basic-oracle.mjs
+```
 
 ### Optional Peer Dependencies
 
@@ -125,6 +136,8 @@ trace-weave uses subpath exports. Import from the specific module you need:
 
 ## Next Steps
 
+- [Docs Index](./README.md) -- Guide map by task
+- [Examples](../examples/README.md) -- Runnable repository examples
 - [Patterns](./patterns.md) -- Pre-built temporal patterns with LTLf encodings
 - [Formulas](./formulas.md) -- Raw builder API and all temporal operators
 - [Monitor](./monitor.md) -- Three-valued verdict system and evaluation modes

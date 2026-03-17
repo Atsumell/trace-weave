@@ -1,11 +1,15 @@
 # Monitor and Evaluation
 
+Japanese version: [monitor.ja.md](./monitor.ja.md)
+
 The `trace-weave/monitor` module provides two evaluation strategies and a three-valued verdict system for checking temporal formulas against event traces.
+
+Runnable examples: [`../examples/basic-oracle.mjs`](../examples/basic-oracle.mjs), [`../examples/online-monitor.mjs`](../examples/online-monitor.mjs)
 
 ```typescript
 import {
   evaluateFormula, runOracle,
-  createMonitor, evaluateStep, finalize, buildReport,
+  createMonitor, evaluateStep, finalize, finalizeEmpty, buildReport,
 } from "trace-weave/monitor";
 ```
 

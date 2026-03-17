@@ -2,6 +2,8 @@
 
 The `capture` and `when` operators enable **value correlation** across events in a trace. They let you snapshot a value from one event and then check that the same value appears in a later event.
 
+Runnable example: [`../examples/capture-correlation.mjs`](../examples/capture-correlation.mjs)
+
 ```typescript
 import { capture, when } from "trace-weave/builder";
 import { captureName, selectorId } from "trace-weave/core";

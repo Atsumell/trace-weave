@@ -1,0 +1,85 @@
+# Monitor and Evaluation
+
+English version: [monitor.md](./monitor.md)
+
+`trace-weave/monitor` は、有限長トレースに対する評価器です。正しさ重視なら `runOracle`、増分連携が必要なら online monitor を使います。
+
+実行可能な example: [../examples/basic-oracle.mjs](../examples/basic-oracle.mjs), [../examples/online-monitor.mjs](../examples/online-monitor.mjs)
+
+```typescript
+import {
+  evaluateFormula, runOracle,
+  createMonitor, evaluateStep, finalize, finalizeEmpty, buildReport,
+} from "trace-weave/monitor";
+```
+
+## Verdict の 3 値
+
+| Verdict       | 意味 |
+|---------------|------|
+| `"satisfied"` | 現在の有限 trace に対して式が成立している |
+| `"violated"`  | 現在の有限 trace に対して式が不成立である |
+| `"pending"`   | 現時点では確定できず、追加イベントが必要 |
+
+## Batch Evaluation
+
+`evaluateFormula` は compile 済み `FormulaDocument`、`MonitorRuntime`、完全な trace を受け取り、式木全体を再帰的に評価します。最も単純で、完全な trace がある場合の基本 API です。
+
+`withinMs` を使う場合は `MonitorRuntime.timestamp` が必要です。返す値は有限で、trace に沿って非減少でなければなりません。
+
+## runOracle
+
+`runOracle` は最も使いやすい入口です。未 compile の `FormulaExpr` を受け取り、compile と評価をまとめて行って以下を返します。
+
+```typescript
+interface OracleRunResult {
+  readonly verdict: Verdict;
+  readonly steps: number;
+  readonly report: CounterexampleReport | null;
+}
+```
+
+`verdict === "violated"` のときは `report` に failure path、trace slice、summary が入ります。テストコードからは通常この API を使うのが自然です。
+
+## Online Monitoring
+
+streaming や長寿命プロセス向けに、増分評価 API もあります。
+
+```typescript
+import { compile, prepare } from "trace-weave/compiler";
+import { createMonitor, evaluateStep, finalize, finalizeEmpty } from "trace-weave/monitor";
+
+const compiled = prepare(compile(formula));
+const monitor = createMonitor(compiled, runtime);
+```
+
+### evaluateStep
+
+`evaluateStep` は観測済み prefix に対する verdict を返します。`always`、`eventually`、`until`、`weakNext` などの future operator は、証拠が揃うか trace が閉じるまで `"pending"` のまま残ることがあります。
+
+### finalize と finalizeEmpty
+
+trace が終わったら `finalize(monitor, lastEvent)` を呼びます。これは完全 trace に対する最終 verdict を batch evaluator と同じ semantics で解決します。
+
+真に空の trace を評価したい場合は `finalizeEmpty(monitor)` を使います。`finalize()` は後方互換のため、空 monitor に対して呼ばれた場合でも `lastEvent` から 1 要素 trace を materialize します。
+
+## Trace End Semantics
+
+| Operator     | trace 中 | trace end |
+|--------------|----------|-----------|
+| `always`     | pending  | satisfied |
+| `eventually` | pending  | violated  |
+| `next`       | pending  | violated  |
+| `weakNext`   | pending  | satisfied |
+| `until`      | pending  | 最終位置で右辺を確認 |
+| `release`    | pending  | 最終位置で右辺を確認 |
+| `withinSteps`| pending  | 未達なら violated |
+| `withinMs`   | pending  | 窓内未達なら violated |
+
+## 使い分け
+
+- `runOracle`: テスト、one-shot verification、最終 verdict が欲しいとき
+- `evaluateFormula`: compile 済み document を直接評価したいとき
+- online monitor: イベントを増分処理したいとき
+
+通常のテストでは `runOracle` を優先し、online monitor は integration 用と考えると扱いやすいです。

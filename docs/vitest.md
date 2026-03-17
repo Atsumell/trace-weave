@@ -2,6 +2,8 @@
 
 trace-weave provides custom vitest matchers for ergonomic temporal property assertions in test files.
 
+Runnable example: [`../examples/vitest-response.test.mjs`](../examples/vitest-response.test.mjs) with [`../examples/vitest.config.mjs`](../examples/vitest.config.mjs)
+
 ```typescript
 import { installMatchers } from "trace-weave/vitest";
 ```

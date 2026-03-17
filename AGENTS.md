@@ -24,3 +24,6 @@ Git history is not available in this workspace snapshot, so no repository-specif
 
 ## Contributor Notes
 Treat `dist/` as build output. When adding a new public surface, update `package.json` exports, `tsup.config.ts` entries, tests, and the relevant document in `docs/`.
+
+## Documentation & Localization
+Keep the primary documentation in English. For key entry documents, add or update Japanese companion files using the `*.ja.md` naming pattern, for example `README.ja.md` or `docs/getting-started.ja.md`. When an English source page changes materially, update its Japanese companion in the same change or explicitly remove stale links until the translation is refreshed.
