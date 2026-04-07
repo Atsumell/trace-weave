@@ -9,6 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan for leaked secrets
+        uses: gacts/gitleaks@v1
 
       - uses: actions/setup-node@v4
         with:
@@ -16,6 +21,7 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: npm run audit
       - run: npm run lint
       - run: npm run skills:validate
       - run: npm run typecheck

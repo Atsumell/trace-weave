@@ -1,5 +1,6 @@
 import { print } from "../compiler/printer.js";
 import type { Verdict } from "../core/verdict.js";
+import { buildCounterexampleReport } from "./diagnostics.js";
 import { evaluateFormula } from "./evaluate.js";
 import type { MonitorState } from "./types.js";
 
@@ -44,12 +45,12 @@ function finalizeObservedTrace<TEvent>(state: MonitorState<TEvent>): Verdict {
 
 	state.finalReport =
 		verdict === "violated"
-			? {
+			? (buildCounterexampleReport(state.compiled.document, state.runtime, state.trace) ?? {
 					verdict: "violated",
 					failurePath: [],
 					traceSlice: state.trace.map((event, i) => ({ step: i + 1, event })),
 					summary: `Formula violated: ${print(state.compiled.document)}`,
-				}
+				})
 			: null;
 
 	return rootAct?.verdict ?? verdict;

@@ -224,6 +224,18 @@ describe("online monitor parity", () => {
 		]);
 	});
 
+	it("retains a diagnostic failure path after finalize", () => {
+		const formula = always(predicate(isA));
+		const monitor = createMonitor(prepare(compile(formula)), runtime);
+		evaluateStep(monitor, event(["a"]));
+		evaluateStep(monitor, event(["c"]));
+
+		expect(finalize(monitor, event(["c"]))).toBe("violated");
+		expect(buildReport(monitor, monitor.trace)?.failurePath.map((snap) => snap.step)).toEqual([
+			0, 1,
+		]);
+	});
+
 	it("keeps capture/when verdicts aligned across satisfied and violated traces", () => {
 		const formula = always(
 			implies(
@@ -246,6 +258,8 @@ describe("online monitor parity", () => {
 		expect(onlineViolated.verdict).toBe("violated");
 		expect(batchViolated.report).not.toBeNull();
 		expect(onlineViolated.report).not.toBeNull();
+		expect(batchViolated.report?.failurePath.length).toBeGreaterThan(0);
+		expect(onlineViolated.report?.failurePath.length).toBeGreaterThan(0);
 		expect(onlineViolated.report?.summary).toBe(batchViolated.report?.summary);
 	});
 

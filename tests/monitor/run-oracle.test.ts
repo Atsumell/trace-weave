@@ -120,6 +120,11 @@ describe("runOracle", () => {
 				{ type: "A" },
 			]);
 			expect(result.verdict).toBe("violated");
+			expect(result.report?.failurePath.map((snap) => snap.step)).toEqual([0, 1]);
+			expect(result.report?.failurePath.map((snap) => snap.verdict)).toEqual([
+				"violated",
+				"violated",
+			]);
 		});
 	});
 
@@ -307,6 +312,15 @@ describe("runOracle", () => {
 					{ type: "A", at: 500 },
 				]),
 			).toThrowError(/non-decreasing/);
+		});
+
+		it("withinMs: rejects NaN budgets", () => {
+			expect(() =>
+				runOracle(withinMs(Number.NaN, predicate(pId)), runtime, [
+					{ type: "B", at: 0 },
+					{ type: "A", at: 10_000 },
+				]),
+			).toThrowError(/positive number/);
 		});
 	});
 

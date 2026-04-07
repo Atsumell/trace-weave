@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { always, capture, predicate, when, withinSteps } from "../../src/builder/factory.js";
+import {
+	always,
+	capture,
+	predicate,
+	when,
+	withinMs,
+	withinSteps,
+} from "../../src/builder/factory.js";
 import { compile } from "../../src/compiler/compile.js";
 import { validate } from "../../src/compiler/validate.js";
 import { captureName, predicateId, selectorId } from "../../src/core/ids.js";
@@ -33,5 +40,14 @@ describe("validate", () => {
 		const errors = validate(doc);
 		expect(errors.length).toBeGreaterThan(0);
 		expect(errors[0]?.message).toContain("positive integer");
+	});
+
+	it("detects invalid withinMs bounds", () => {
+		for (const ms of [Number.NaN, Number.POSITIVE_INFINITY, 0, -1]) {
+			const doc = compile(withinMs(ms, predicate(predicateId("p"))));
+			const errors = validate(doc);
+			expect(errors.length).toBeGreaterThan(0);
+			expect(errors[0]?.message).toContain("positive number");
+		}
 	});
 });

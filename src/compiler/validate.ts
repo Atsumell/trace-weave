@@ -54,7 +54,7 @@ export function validate(doc: FormulaDocument): ValidationError[] {
 				break;
 
 			case "withinMs":
-				if (node.ms <= 0) {
+				if (!Number.isFinite(node.ms) || node.ms <= 0) {
 					errors.push({
 						nodeId: nid,
 						message: `withinMs requires a positive number, got ${node.ms}`,
