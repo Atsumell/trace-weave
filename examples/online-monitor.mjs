@@ -1,14 +1,14 @@
-import { predicate } from "trace-weave/builder";
-import { compile, prepare } from "trace-weave/compiler";
-import { predicateId } from "trace-weave/core";
+import { predicate } from "@atsumell/trace-weave/builder";
+import { compile, prepare } from "@atsumell/trace-weave/compiler";
+import { predicateId } from "@atsumell/trace-weave/core";
 import {
 	buildReport,
 	createMonitor,
 	evaluateStep,
 	finalize,
 	finalizeEmpty,
-} from "trace-weave/monitor";
-import { response } from "trace-weave/patterns";
+} from "@atsumell/trace-weave/monitor";
+import { response } from "@atsumell/trace-weave/patterns";
 
 const isRequest = predicateId("isRequest");
 const isResponse = predicateId("isResponse");

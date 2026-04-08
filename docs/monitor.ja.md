@@ -2,7 +2,7 @@
 
 English version: [monitor.md](./monitor.md)
 
-`trace-weave/monitor` は、有限長トレースに対する評価器です。正しさ重視なら `runOracle`、増分連携が必要なら online monitor を使います。
+`@atsumell/trace-weave/monitor` は、有限長トレースに対する評価器です。正しさ重視なら `runOracle`、増分連携が必要なら online monitor を使います。
 
 実行可能な example: [../examples/basic-oracle.mjs](../examples/basic-oracle.mjs), [../examples/online-monitor.mjs](../examples/online-monitor.mjs)
 
@@ -10,7 +10,7 @@ English version: [monitor.md](./monitor.md)
 import {
   evaluateFormula, runOracle,
   createMonitor, evaluateStep, finalize, finalizeEmpty, buildReport,
-} from "trace-weave/monitor";
+} from "@atsumell/trace-weave/monitor";
 ```
 
 ## Verdict の 3 値
@@ -46,8 +46,8 @@ interface OracleRunResult {
 streaming や長寿命プロセス向けに、増分評価 API もあります。
 
 ```typescript
-import { compile, prepare } from "trace-weave/compiler";
-import { createMonitor, evaluateStep, finalize, finalizeEmpty } from "trace-weave/monitor";
+import { compile, prepare } from "@atsumell/trace-weave/compiler";
+import { createMonitor, evaluateStep, finalize, finalizeEmpty } from "@atsumell/trace-weave/monitor";
 
 const compiled = prepare(compile(formula));
 const monitor = createMonitor(compiled, runtime);

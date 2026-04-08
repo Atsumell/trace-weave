@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, "..");
+const packageName = "@atsumell/trace-weave";
 const tempRoot = mkdtempSync(path.join(tmpdir(), "trace-weave-pack-"));
 
 const tarballName = execFileSync("npm", ["pack", "--pack-destination", tempRoot], {
@@ -27,9 +28,11 @@ const packedDir = path.join(tempRoot, "package");
 function createConsumer(name, dependencies = []) {
 	const consumerDir = path.join(tempRoot, name);
 	const consumerNodeModules = path.join(consumerDir, "node_modules");
+	const consumerPackageDir = path.join(consumerNodeModules, "@atsumell", "trace-weave");
 
 	mkdirSync(consumerNodeModules, { recursive: true });
-	cpSync(packedDir, path.join(consumerNodeModules, "trace-weave"), { recursive: true });
+	mkdirSync(path.dirname(consumerPackageDir), { recursive: true });
+	cpSync(packedDir, consumerPackageDir, { recursive: true });
 
 	for (const dependency of dependencies) {
 		const dependencyPath = path.join(repoRoot, "node_modules", dependency);
@@ -47,12 +50,12 @@ writeFileSync(
 	path.join(baselineConsumerDir, "check.mjs"),
 	[
 		"const [core, builder, compiler, monitor, patterns, ai] = await Promise.all([",
-		'\timport("trace-weave/core"),',
-		'\timport("trace-weave/builder"),',
-		'\timport("trace-weave/compiler"),',
-		'\timport("trace-weave/monitor"),',
-		'\timport("trace-weave/patterns"),',
-		'\timport("trace-weave/ai"),',
+		`\timport("${packageName}/core"),`,
+		`\timport("${packageName}/builder"),`,
+		`\timport("${packageName}/compiler"),`,
+		`\timport("${packageName}/monitor"),`,
+		`\timport("${packageName}/patterns"),`,
+		`\timport("${packageName}/ai"),`,
 		"]);",
 		'if (typeof core.predicateId !== "function") throw new Error("core export missing");',
 		'if (typeof builder.always !== "function") throw new Error("builder export missing");',
@@ -82,7 +85,7 @@ const optionalConsumerDir = createConsumer("consumer-optional", ["fast-check", "
 writeFileSync(
 	path.join(optionalConsumerDir, "check.mjs"),
 	[
-		'const [fastCheck] = await Promise.all([import("trace-weave/fast-check")]);',
+		`const [fastCheck] = await Promise.all([import("${packageName}/fast-check")]);`,
 		'if (typeof fastCheck.traceProperty !== "function") throw new Error("fast-check export missing");',
 		'console.log("optional import smoke passed");',
 		"",
@@ -93,9 +96,9 @@ writeFileSync(
 	path.join(optionalConsumerDir, "vitest-smoke.test.mjs"),
 	[
 		'import { describe, expect, it } from "vitest";',
-		'import { installMatchers } from "trace-weave/vitest";',
-		'import { always, predicate } from "trace-weave/builder";',
-		'import { predicateId } from "trace-weave/core";',
+		`import { installMatchers } from "${packageName}/vitest";`,
+		`import { always, predicate } from "${packageName}/builder";`,
+		`import { predicateId } from "${packageName}/core";`,
 		"",
 		"installMatchers();",
 		"",

@@ -5,8 +5,8 @@ The `capture` and `when` operators enable **value correlation** across events in
 Runnable example: [`../examples/capture-correlation.mjs`](../examples/capture-correlation.mjs)
 
 ```typescript
-import { capture, when } from "trace-weave/builder";
-import { captureName, selectorId } from "trace-weave/core";
+import { capture, when } from "@atsumell/trace-weave/builder";
+import { captureName, selectorId } from "@atsumell/trace-weave/core";
 ```
 
 ---
@@ -46,10 +46,10 @@ If the values do not match, `when` evaluates to `"violated"`.
 ## Example: Matching Request and Response IDs
 
 ```typescript
-import { capture, when, predicate, always, implies, eventually } from "trace-weave/builder";
-import { predicateId, selectorId, captureName } from "trace-weave/core";
-import { runOracle } from "trace-weave/monitor";
-import type { MonitorRuntime, PredicateId, SelectorId, CaptureName, JsonValue } from "trace-weave/core";
+import { capture, when, predicate, always, implies, eventually } from "@atsumell/trace-weave/builder";
+import { predicateId, selectorId, captureName } from "@atsumell/trace-weave/core";
+import { runOracle } from "@atsumell/trace-weave/monitor";
+import type { MonitorRuntime, PredicateId, SelectorId, CaptureName, JsonValue } from "@atsumell/trace-weave/core";
 
 // Event type
 interface Event {
@@ -121,7 +121,7 @@ console.log(result.verdict); // "satisfied"
 - A `when` referencing a name that is not in scope produces a validation error.
 
 ```typescript
-import { validate } from "trace-weave/compiler";
+import { validate } from "@atsumell/trace-weave/compiler";
 
 // After compiling, you can check for scoping errors:
 const doc = compile(formula);
@@ -165,7 +165,7 @@ Selector return values must be `JsonValue` (string, number, boolean, null, or ne
 Selectors can also be used as arguments to predicates via `current()`:
 
 ```typescript
-import { current, value } from "trace-weave/core";
+import { current, value } from "@atsumell/trace-weave/core";
 
 const gt = predicateId("gt");
 

@@ -2,7 +2,7 @@
 
 trace-weave provides pre-built temporal specification patterns that encode common behavioral requirements. Each pattern is a function that returns a `FormulaExpr`, composing the underlying LTLf operators for you.
 
-All patterns are available from `trace-weave/patterns`.
+All patterns are available from `@atsumell/trace-weave/patterns`.
 
 Runnable example: [`../examples/patterns.mjs`](../examples/patterns.mjs)
 
@@ -10,7 +10,7 @@ Runnable example: [`../examples/patterns.mjs`](../examples/patterns.mjs)
 import {
   absence, response, boundedResponse, precedence, persistence, stability,
   globally, after, before, between,
-} from "trace-weave/patterns";
+} from "@atsumell/trace-weave/patterns";
 ```
 
 ## Setup for Examples
@@ -18,10 +18,10 @@ import {
 All examples below use this shared setup:
 
 ```typescript
-import { predicate } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import { runOracle } from "trace-weave/monitor";
-import type { MonitorRuntime, PredicateId, SelectorId, JsonValue } from "trace-weave/core";
+import { predicate } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import { runOracle } from "@atsumell/trace-weave/monitor";
+import type { MonitorRuntime, PredicateId, SelectorId, JsonValue } from "@atsumell/trace-weave/core";
 
 interface Event { type: string }
 
@@ -188,8 +188,8 @@ Scoped patterns restrict when a base pattern must hold. They wrap any `FormulaEx
 **LTLf encoding:** `G(pattern)`
 
 ```typescript
-import { globally } from "trace-weave/patterns";
-import { not } from "trace-weave/builder";
+import { globally } from "@atsumell/trace-weave/patterns";
+import { not } from "@atsumell/trace-weave/builder";
 
 // Error events never occur
 const formula = globally(not(p));
@@ -204,7 +204,7 @@ const formula = globally(not(p));
 **LTLf encoding:** `G(P(q) -> pattern)` where `P` is the past-time "once" operator.
 
 ```typescript
-import { after } from "trace-weave/patterns";
+import { after } from "@atsumell/trace-weave/patterns";
 
 // After initialization (A), property q must always hold
 const formula = after(p, q);
@@ -228,7 +228,7 @@ Note: The `after` scope includes the step where `q` itself occurs. If the patter
 **LTLf encoding:** `G(!P(r) -> pattern)` -- while `r` has never been seen in the past, the pattern must hold.
 
 ```typescript
-import { before } from "trace-weave/patterns";
+import { before } from "@atsumell/trace-weave/patterns";
 
 // Before shutdown (C), all events must be A
 const formula = before(r, p);
@@ -247,7 +247,7 @@ runOracle(formula, runtime, [
 **LTLf encoding:** `G((P(q) & !P(r)) -> pattern)`
 
 ```typescript
-import { between } from "trace-weave/patterns";
+import { between } from "@atsumell/trace-weave/patterns";
 
 // Between A and C, all events must be B
 const formula = between(p, r, q);
@@ -260,7 +260,7 @@ const formula = between(p, r, q);
 Patterns return plain `FormulaExpr` values, so you can compose them freely with builder operators:
 
 ```typescript
-import { and } from "trace-weave/builder";
+import { and } from "@atsumell/trace-weave/builder";
 
 // Both patterns must hold simultaneously
 const formula = and(

@@ -8,7 +8,7 @@ Runnable example: [`../examples/fast-check-response.mjs`](../examples/fast-check
 import {
   traceArbitrary, commandAdapter,
   traceProperty, commandProperty,
-} from "trace-weave/fast-check";
+} from "@atsumell/trace-weave/fast-check";
 ```
 
 Requires `fast-check >= 3.0.0` as a peer dependency.
@@ -21,7 +21,7 @@ Generates random arrays of events.
 
 ```typescript
 import * as fc from "fast-check";
-import { traceArbitrary } from "trace-weave/fast-check";
+import { traceArbitrary } from "@atsumell/trace-weave/fast-check";
 
 interface Event {
   type: string;
@@ -58,10 +58,10 @@ Creates a fast-check property that runs the oracle on each generated trace. If t
 
 ```typescript
 import * as fc from "fast-check";
-import { traceArbitrary, traceProperty } from "trace-weave/fast-check";
-import { always, predicate, implies, eventually } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import type { MonitorRuntime, PredicateId, SelectorId, JsonValue } from "trace-weave/core";
+import { traceArbitrary, traceProperty } from "@atsumell/trace-weave/fast-check";
+import { always, predicate, implies, eventually } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import type { MonitorRuntime, PredicateId, SelectorId, JsonValue } from "@atsumell/trace-weave/core";
 
 interface Event { type: string }
 
@@ -110,7 +110,7 @@ Bridges fast-check's command-based model checking to trace-weave. It takes a set
 
 ```typescript
 import * as fc from "fast-check";
-import { commandAdapter } from "trace-weave/fast-check";
+import { commandAdapter } from "@atsumell/trace-weave/fast-check";
 
 interface CounterModel {
   count: number;
@@ -177,7 +177,7 @@ interface CommandAdapterConfig<TModel extends object, TReal> {
 Convenience function that combines `commandAdapter` output with `traceProperty`. It creates a fast-check property from a formula, runtime, and command-generated trace arbitrary.
 
 ```typescript
-import { commandProperty } from "trace-weave/fast-check";
+import { commandProperty } from "@atsumell/trace-weave/fast-check";
 
 const prop = commandProperty(formula, runtime, traceFromCommands);
 fc.assert(prop);
@@ -192,7 +192,7 @@ Combine fast-check with vitest for integrated test suites:
 ```typescript
 import { describe, it } from "vitest";
 import * as fc from "fast-check";
-import { traceProperty, traceArbitrary } from "trace-weave/fast-check";
+import { traceProperty, traceArbitrary } from "@atsumell/trace-weave/fast-check";
 
 describe("temporal properties", () => {
   it("response pattern holds across random traces", () => {
@@ -217,8 +217,8 @@ describe("temporal properties", () => {
 Property-based testing is useful for verifying LTLf algebraic identities:
 
 ```typescript
-import { not, always, eventually, predicate } from "trace-weave/builder";
-import { runOracle } from "trace-weave/monitor";
+import { not, always, eventually, predicate } from "@atsumell/trace-weave/builder";
+import { runOracle } from "@atsumell/trace-weave/monitor";
 
 // Duality: !G(p) == F(!p)
 fc.assert(

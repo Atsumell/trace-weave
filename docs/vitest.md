@@ -5,7 +5,7 @@ trace-weave provides custom vitest matchers for ergonomic temporal property asse
 Runnable example: [`../examples/vitest-response.test.mjs`](../examples/vitest-response.test.mjs) with [`../examples/vitest.config.mjs`](../examples/vitest.config.mjs)
 
 ```typescript
-import { installMatchers } from "trace-weave/vitest";
+import { installMatchers } from "@atsumell/trace-weave/vitest";
 ```
 
 Requires `vitest >= 2.0.0` as a peer dependency.
@@ -21,7 +21,7 @@ Call `installMatchers()` once before your tests run. The recommended approach is
 Create a setup file (e.g., `tests/setup.ts`):
 
 ```typescript
-import { installMatchers } from "trace-weave/vitest";
+import { installMatchers } from "@atsumell/trace-weave/vitest";
 
 installMatchers();
 ```
@@ -42,7 +42,7 @@ export default defineConfig({
 
 ```typescript
 import { describe, it, expect, beforeAll } from "vitest";
-import { installMatchers } from "trace-weave/vitest";
+import { installMatchers } from "@atsumell/trace-weave/vitest";
 
 beforeAll(() => {
   installMatchers();
@@ -58,9 +58,9 @@ beforeAll(() => {
 Asserts that a trace satisfies the given formula under the given runtime.
 
 ```typescript
-import { predicate, always } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import type { MonitorRuntime, PredicateId, SelectorId, JsonValue } from "trace-weave/core";
+import { predicate, always } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import type { MonitorRuntime, PredicateId, SelectorId, JsonValue } from "@atsumell/trace-weave/core";
 
 interface Event { type: string }
 
@@ -128,11 +128,11 @@ it("trace does not satisfy the formula", () => {
 
 ```typescript
 import { describe, it, expect, beforeAll } from "vitest";
-import { installMatchers } from "trace-weave/vitest";
-import { predicate, always, implies, eventually } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import { response } from "trace-weave/patterns";
-import type { MonitorRuntime, PredicateId, SelectorId, JsonValue } from "trace-weave/core";
+import { installMatchers } from "@atsumell/trace-weave/vitest";
+import { predicate, always, implies, eventually } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import { response } from "@atsumell/trace-weave/patterns";
+import type { MonitorRuntime, PredicateId, SelectorId, JsonValue } from "@atsumell/trace-weave/core";
 
 beforeAll(() => {
   installMatchers();
@@ -174,7 +174,7 @@ describe("request-response protocol", () => {
 
 ## Type Augmentation
 
-`installMatchers` extends vitest's `expect` with the custom matchers through module augmentation. The type declarations are included automatically when you import from `trace-weave/vitest`. Your IDE should provide full autocomplete for `toSatisfy` and `toViolate`.
+`installMatchers` extends vitest's `expect` with the custom matchers through module augmentation. The type declarations are included automatically when you import from `@atsumell/trace-weave/vitest`. Your IDE should provide full autocomplete for `toSatisfy` and `toViolate`.
 
 If TypeScript does not pick up the augmented types, ensure your `tsconfig.json` includes the trace-weave type declarations:
 

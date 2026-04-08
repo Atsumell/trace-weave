@@ -1,7 +1,7 @@
+import { always, predicate } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import { traceArbitrary, traceProperty } from "@atsumell/trace-weave/fast-check";
 import * as fc from "fast-check";
-import { always, predicate } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import { traceArbitrary, traceProperty } from "trace-weave/fast-check";
 
 const isOk = predicateId("isOk");
 

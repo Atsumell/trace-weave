@@ -1,7 +1,7 @@
-import { predicate } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import { response } from "trace-weave/patterns";
-import { installMatchers } from "trace-weave/vitest";
+import { predicate } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import { response } from "@atsumell/trace-weave/patterns";
+import { installMatchers } from "@atsumell/trace-weave/vitest";
 import { beforeAll, describe, expect, it } from "vitest";
 
 beforeAll(() => {

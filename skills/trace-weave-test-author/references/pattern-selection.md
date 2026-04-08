@@ -2,7 +2,7 @@
 
 Choose the smallest trace-weave abstraction that matches the requirement.
 
-## Prefer `trace-weave/patterns`
+## Prefer `@atsumell/trace-weave/patterns`
 
 Use these first:
 
@@ -16,7 +16,7 @@ Use these first:
 
 ## Use raw builder operators when no pattern fits
 
-Reach for `trace-weave/builder` when the requirement needs:
+Reach for `@atsumell/trace-weave/builder` when the requirement needs:
 
 - nested temporal structure
 - boolean composition across multiple patterns

@@ -1,8 +1,8 @@
-import { formatReport } from "trace-weave/ai";
-import { always, annotate, predicate } from "trace-weave/builder";
-import { compile } from "trace-weave/compiler";
-import { predicateId } from "trace-weave/core";
-import { runOracle } from "trace-weave/monitor";
+import { formatReport } from "@atsumell/trace-weave/ai";
+import { always, annotate, predicate } from "@atsumell/trace-weave/builder";
+import { compile } from "@atsumell/trace-weave/compiler";
+import { predicateId } from "@atsumell/trace-weave/core";
+import { runOracle } from "@atsumell/trace-weave/monitor";
 
 const isOk = predicateId("isOk");
 

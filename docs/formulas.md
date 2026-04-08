@@ -1,6 +1,6 @@
 # Formula Builder API
 
-The `trace-weave/builder` module provides functions to construct `FormulaExpr` trees. These are the raw building blocks that the higher-level [patterns](./patterns.md) are composed from.
+The `@atsumell/trace-weave/builder` module provides functions to construct `FormulaExpr` trees. These are the raw building blocks that the higher-level [patterns](./patterns.md) are composed from.
 
 ```typescript
 import {
@@ -10,7 +10,7 @@ import {
   withinSteps, withinMs,
   capture, when,
   toExpr, annotate,
-} from "trace-weave/builder";
+} from "@atsumell/trace-weave/builder";
 ```
 
 Every builder function returns a `FormulaExpr`. Arguments accept `boolean | FormulaExpr` -- bare `true`/`false` values are automatically promoted to `LiteralExpr` nodes via `toExpr`.
@@ -60,7 +60,7 @@ literal(false); // always violated
 References a predicate function registered in the `MonitorRuntime`. The predicate is evaluated against each event at runtime.
 
 ```typescript
-import { predicateId } from "trace-weave/core";
+import { predicateId } from "@atsumell/trace-weave/core";
 
 const isError = predicateId("isError");
 predicate(isError);
@@ -69,7 +69,7 @@ predicate(isError);
 With arguments (using `ValueExprArg`):
 
 ```typescript
-import { predicateId, selectorId, current, value } from "trace-weave/core";
+import { predicateId, selectorId, current, value } from "@atsumell/trace-weave/core";
 
 const gt = predicateId("gt");
 const amount = selectorId("amount");

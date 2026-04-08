@@ -1,5 +1,5 @@
 {
-	"name": "trace-weave",
+	"name": "@atsumell/trace-weave",
 	"version": "0.1.0",
 	"description": "Finite-trace temporal test oracle framework based on LTLf",
 	"repository": {
@@ -10,6 +10,9 @@
 		"url": "https://github.com/Atsumell/trace-weave/issues"
 	},
 	"homepage": "https://github.com/Atsumell/trace-weave#readme",
+	"publishConfig": {
+		"access": "public"
+	},
 	"type": "module",
 	"exports": {
 		"./core": {

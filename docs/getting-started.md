@@ -7,7 +7,7 @@ trace-weave is a finite-trace temporal test oracle framework based on LTLf (Line
 ## Installation
 
 ```bash
-npm install trace-weave
+npm install @atsumell/trace-weave
 ```
 
 trace-weave requires Node.js 20 or later. It ships as ESM only.
@@ -44,10 +44,10 @@ npm install fast-check vitest  # install whichever you need
 Suppose you have a system that emits events with a `type` field. You want to verify that every `"request"` event is eventually followed by a `"response"` event.
 
 ```typescript
-import { predicate, always, implies, eventually } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import { runOracle } from "trace-weave/monitor";
-import type { MonitorRuntime, PredicateId, SelectorId, JsonValue } from "trace-weave/core";
+import { predicate, always, implies, eventually } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import { runOracle } from "@atsumell/trace-weave/monitor";
+import type { MonitorRuntime, PredicateId, SelectorId, JsonValue } from "@atsumell/trace-weave/core";
 
 // 1. Define your event type
 interface AppEvent {
@@ -110,8 +110,8 @@ console.log(badResult.report?.summary); // "Formula violated."
 Instead of manually composing `always(implies(..., eventually(...)))`, you can use the built-in `response` pattern:
 
 ```typescript
-import { response } from "trace-weave/patterns";
-import { predicate } from "trace-weave/builder";
+import { response } from "@atsumell/trace-weave/patterns";
+import { predicate } from "@atsumell/trace-weave/builder";
 
 const formula = response(predicate(isRequest), predicate(isResponse));
 // Equivalent to: always(implies(predicate(isRequest), eventually(predicate(isResponse))))
@@ -125,14 +125,14 @@ trace-weave uses subpath exports. Import from the specific module you need:
 
 | Import path             | Contents                                    |
 |-------------------------|---------------------------------------------|
-| `trace-weave/core`      | Types, IDs, verdict algebra                 |
-| `trace-weave/builder`   | Formula builder functions                   |
-| `trace-weave/compiler`  | compile, prepare, validate, print           |
-| `trace-weave/monitor`   | evaluateFormula, runOracle, online monitor  |
-| `trace-weave/patterns`  | High-level temporal patterns                |
-| `trace-weave/fast-check`| Property-based testing integration          |
-| `trace-weave/vitest`    | Custom vitest matchers                      |
-| `trace-weave/ai`        | JSON schema, metadata, report formatting    |
+| `@atsumell/trace-weave/core`      | Types, IDs, verdict algebra                 |
+| `@atsumell/trace-weave/builder`   | Formula builder functions                   |
+| `@atsumell/trace-weave/compiler`  | compile, prepare, validate, print           |
+| `@atsumell/trace-weave/monitor`   | evaluateFormula, runOracle, online monitor  |
+| `@atsumell/trace-weave/patterns`  | High-level temporal patterns                |
+| `@atsumell/trace-weave/fast-check`| Property-based testing integration          |
+| `@atsumell/trace-weave/vitest`    | Custom vitest matchers                      |
+| `@atsumell/trace-weave/ai`        | JSON schema, metadata, report formatting    |
 
 ## Next Steps
 

@@ -1,6 +1,6 @@
-import { always, eventually, implies, predicate } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import { runOracle } from "trace-weave/monitor";
+import { always, eventually, implies, predicate } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import { runOracle } from "@atsumell/trace-weave/monitor";
 
 const isRequest = predicateId("isRequest");
 const isResponse = predicateId("isResponse");

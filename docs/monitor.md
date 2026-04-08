@@ -2,7 +2,7 @@
 
 Japanese version: [monitor.ja.md](./monitor.ja.md)
 
-The `trace-weave/monitor` module provides two evaluation strategies and a three-valued verdict system for checking temporal formulas against event traces.
+The `@atsumell/trace-weave/monitor` module provides two evaluation strategies and a three-valued verdict system for checking temporal formulas against event traces.
 
 Runnable examples: [`../examples/basic-oracle.mjs`](../examples/basic-oracle.mjs), [`../examples/online-monitor.mjs`](../examples/online-monitor.mjs)
 
@@ -10,7 +10,7 @@ Runnable examples: [`../examples/basic-oracle.mjs`](../examples/basic-oracle.mjs
 import {
   evaluateFormula, runOracle,
   createMonitor, evaluateStep, finalize, finalizeEmpty, buildReport,
-} from "trace-weave/monitor";
+} from "@atsumell/trace-weave/monitor";
 ```
 
 `runOracle` is the recommended entrypoint for correctness-focused testing. Use the online monitor when you need incremental integration, then call `finalize` to resolve the complete finite-trace verdict.
@@ -27,10 +27,10 @@ Every evaluation produces one of three verdicts:
 | `"violated"`  | The formula definitely does not hold on the given trace.             |
 | `"pending"`   | The formula's truth value cannot yet be determined (needs more data).|
 
-The verdict algebra is defined in `trace-weave/core`:
+The verdict algebra is defined in `@atsumell/trace-weave/core`:
 
 ```typescript
-import { notV, andV, orV, impliesV } from "trace-weave/core";
+import { notV, andV, orV, impliesV } from "@atsumell/trace-weave/core";
 
 notV("satisfied");           // "violated"
 notV("violated");            // "satisfied"
@@ -52,9 +52,9 @@ impliesV("violated", "violated"); // "satisfied" (false -> anything)
 `evaluateFormula` takes a compiled `FormulaDocument`, a `MonitorRuntime`, and a complete trace. It evaluates the entire formula tree against the full trace using recursive descent with memoization.
 
 ```typescript
-import { evaluateFormula } from "trace-weave/monitor";
-import { compile } from "trace-weave/compiler";
-import type { MonitorRuntime } from "trace-weave/core";
+import { evaluateFormula } from "@atsumell/trace-weave/monitor";
+import { compile } from "@atsumell/trace-weave/compiler";
+import type { MonitorRuntime } from "@atsumell/trace-weave/core";
 
 const doc = compile(formula);
 const verdict = evaluateFormula(doc, runtime, trace);
@@ -80,7 +80,7 @@ This is the most straightforward evaluation method. It processes the trace as a 
 `runOracle` is the simplest entry point. It accepts a raw `FormulaExpr` (no need to compile first), compiles it, evaluates it, and returns a structured result.
 
 ```typescript
-import { runOracle } from "trace-weave/monitor";
+import { runOracle } from "@atsumell/trace-weave/monitor";
 
 const result = runOracle(formula, runtime, trace);
 ```
@@ -138,8 +138,8 @@ The online monitor requires the same timestamp contract for `withinMs`. Creating
 ### Creating a Monitor
 
 ```typescript
-import { compile, prepare } from "trace-weave/compiler";
-import { createMonitor, evaluateStep, finalize, finalizeEmpty } from "trace-weave/monitor";
+import { compile, prepare } from "@atsumell/trace-weave/compiler";
+import { createMonitor, evaluateStep, finalize, finalizeEmpty } from "@atsumell/trace-weave/monitor";
 
 const doc = compile(formula);
 const compiled = prepare(doc);
@@ -191,7 +191,7 @@ Both functions resolve the monitor against the complete observed trace using the
 After finalization, use `buildReport` to generate a counterexample report:
 
 ```typescript
-import { buildReport } from "trace-weave/monitor";
+import { buildReport } from "@atsumell/trace-weave/monitor";
 
 const report = buildReport(monitor, trace);
 if (report) {

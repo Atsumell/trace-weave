@@ -1,6 +1,6 @@
 # AI Integration
 
-The `trace-weave/ai` module provides utilities for making formula documents and verification results consumable by LLMs (Large Language Models) and other AI systems.
+The `@atsumell/trace-weave/ai` module provides utilities for making formula documents and verification results consumable by LLMs (Large Language Models) and other AI systems.
 
 Runnable example: [`../examples/ai-report.mjs`](../examples/ai-report.mjs)
 
@@ -9,7 +9,7 @@ import {
   formulaDocumentSchema,
   getNodeLabel, getNodeProvenance, getAllLabels,
   formatReport,
-} from "trace-weave/ai";
+} from "@atsumell/trace-weave/ai";
 ```
 
 ---
@@ -19,7 +19,7 @@ import {
 `formulaDocumentSchema` is a JSON Schema (draft-07) object describing the structure of a `FormulaDocument`. It can be provided to an LLM as part of its context so the model can generate or interpret formula documents.
 
 ```typescript
-import { formulaDocumentSchema } from "trace-weave/ai";
+import { formulaDocumentSchema } from "@atsumell/trace-weave/ai";
 
 // Pass the schema to an LLM as a tool definition or system prompt
 const systemPrompt = `
@@ -48,10 +48,10 @@ Each node in `nodes` has a `kind` field with one of: `literal`, `predicate`, `wh
 Returns a human-readable label for a node. If the node has provenance metadata with a `humanLabel`, that is returned. Otherwise, the node's `kind` is returned.
 
 ```typescript
-import { getNodeLabel } from "trace-weave/ai";
-import { compile } from "trace-weave/compiler";
-import { annotate, always, predicate } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
+import { getNodeLabel } from "@atsumell/trace-weave/ai";
+import { compile } from "@atsumell/trace-weave/compiler";
+import { annotate, always, predicate } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
 
 const formula = annotate(
   always(predicate(predicateId("isHealthy"))),
@@ -69,7 +69,7 @@ const label = getNodeLabel(doc, doc.root);
 Returns the full provenance record for a node, if available.
 
 ```typescript
-import { getNodeProvenance } from "trace-weave/ai";
+import { getNodeProvenance } from "@atsumell/trace-weave/ai";
 
 const provenance = getNodeProvenance(doc, doc.root);
 if (provenance) {
@@ -84,7 +84,7 @@ if (provenance) {
 Returns a map from every NodeId in the document to its human-readable label.
 
 ```typescript
-import { getAllLabels } from "trace-weave/ai";
+import { getAllLabels } from "@atsumell/trace-weave/ai";
 
 const labels = getAllLabels(doc);
 // { "a1b2c3d4": "always", "e5f6g7h8": "predicate", ... }
@@ -97,9 +97,9 @@ const labels = getAllLabels(doc);
 Converts a `CounterexampleReport` into a structured and text format suitable for LLM consumption.
 
 ```typescript
-import { formatReport } from "trace-weave/ai";
-import { runOracle } from "trace-weave/monitor";
-import { compile } from "trace-weave/compiler";
+import { formatReport } from "@atsumell/trace-weave/ai";
+import { runOracle } from "@atsumell/trace-weave/monitor";
+import { compile } from "@atsumell/trace-weave/compiler";
 
 const result = runOracle(formula, runtime, trace);
 
@@ -167,8 +167,8 @@ A typical workflow for using trace-weave with an LLM:
 4. **Format the report** and feed it back to the LLM for explanation or debugging.
 
 ```typescript
-import { formulaDocumentSchema, formatReport } from "trace-weave/ai";
-import { evaluateFormula } from "trace-weave/monitor";
+import { formulaDocumentSchema, formatReport } from "@atsumell/trace-weave/ai";
+import { evaluateFormula } from "@atsumell/trace-weave/monitor";
 
 // Step 1: Give schema to LLM
 const prompt = `

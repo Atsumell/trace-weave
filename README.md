@@ -23,7 +23,7 @@ The AI-agent install guide is in [docs/skills.md](./docs/skills.md).
 ## Installation
 
 ```bash
-npm install trace-weave
+npm install @atsumell/trace-weave
 ```
 
 Optional peer dependencies:
@@ -35,9 +35,9 @@ npm install fast-check vitest
 ## Quick Example
 
 ```ts
-import { predicate, always, implies, eventually } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import { runOracle } from "trace-weave/monitor";
+import { predicate, always, implies, eventually } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import { runOracle } from "@atsumell/trace-weave/monitor";
 
 type AppEvent = { type: string };
 
@@ -65,14 +65,14 @@ console.log(result.verdict); // "satisfied"
 
 ## Modules
 
-- `trace-weave/core`: IDs, types, verdict algebra, runtime interfaces
-- `trace-weave/builder`: temporal formula builders
-- `trace-weave/compiler`: compile, validate, and print formula documents
-- `trace-weave/monitor`: batch and online evaluation
-- `trace-weave/patterns`: higher-level temporal patterns
-- `trace-weave/fast-check`: property-based testing helpers
-- `trace-weave/vitest`: custom matchers
-- `trace-weave/ai`: report formatting and AI-oriented helpers
+- `@atsumell/trace-weave/core`: IDs, types, verdict algebra, runtime interfaces
+- `@atsumell/trace-weave/builder`: temporal formula builders
+- `@atsumell/trace-weave/compiler`: compile, validate, and print formula documents
+- `@atsumell/trace-weave/monitor`: batch and online evaluation
+- `@atsumell/trace-weave/patterns`: higher-level temporal patterns
+- `@atsumell/trace-weave/fast-check`: property-based testing helpers
+- `@atsumell/trace-weave/vitest`: custom matchers
+- `@atsumell/trace-weave/ai`: report formatting and AI-oriented helpers
 
 ## Development
 

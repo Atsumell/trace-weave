@@ -4,7 +4,7 @@ Complete type reference for all trace-weave subpath exports.
 
 ---
 
-## trace-weave/core
+## @atsumell/trace-weave/core
 
 Core types, branded IDs, verdict algebra, and runtime interfaces.
 
@@ -120,7 +120,7 @@ function impliesV(a: Verdict, b: Verdict): Verdict;
 
 ---
 
-## trace-weave/builder
+## @atsumell/trace-weave/builder
 
 Formula expression constructors.
 
@@ -166,7 +166,7 @@ function withinMs(ms: number, child: boolean | FormulaExpr): WithinMsExpr;
 
 ---
 
-## trace-weave/compiler
+## @atsumell/trace-weave/compiler
 
 Compilation, analysis, validation, and printing of formula documents.
 
@@ -205,7 +205,7 @@ function fnv1a(input: string): number;
 
 ---
 
-## trace-weave/monitor
+## @atsumell/trace-weave/monitor
 
 Evaluation engines and online monitoring.
 
@@ -291,7 +291,7 @@ Use `finalizeEmpty` when the monitor should be resolved against a genuinely empt
 
 ---
 
-## trace-weave/patterns
+## @atsumell/trace-weave/patterns
 
 High-level temporal specification patterns.
 
@@ -315,7 +315,7 @@ function between(q: FormulaExpr, r: FormulaExpr, pattern: FormulaExpr): FormulaE
 
 ---
 
-## trace-weave/fast-check
+## @atsumell/trace-weave/fast-check
 
 Property-based testing integration with fast-check.
 
@@ -370,7 +370,7 @@ function commandProperty<TEvent>(
 
 ---
 
-## trace-weave/vitest
+## @atsumell/trace-weave/vitest
 
 Custom vitest matchers for temporal property assertions.
 
@@ -407,7 +407,7 @@ interface CustomMatchers<R> {
 
 ---
 
-## trace-weave/ai
+## @atsumell/trace-weave/ai
 
 AI/LLM integration utilities.
 

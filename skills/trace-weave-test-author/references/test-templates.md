@@ -5,10 +5,10 @@ Use these shapes as defaults.
 ## `runOracle` unit test
 
 ```ts
-import { predicate } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import { runOracle } from "trace-weave/monitor";
-import { response } from "trace-weave/patterns";
+import { predicate } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import { runOracle } from "@atsumell/trace-weave/monitor";
+import { response } from "@atsumell/trace-weave/patterns";
 
 const isRequest = predicateId("isRequest");
 const isResponse = predicateId("isResponse");
@@ -35,10 +35,10 @@ expect(
 ## Vitest matcher test
 
 ```ts
-import { predicate } from "trace-weave/builder";
-import { predicateId } from "trace-weave/core";
-import { response } from "trace-weave/patterns";
-import { installMatchers } from "trace-weave/vitest";
+import { predicate } from "@atsumell/trace-weave/builder";
+import { predicateId } from "@atsumell/trace-weave/core";
+import { response } from "@atsumell/trace-weave/patterns";
+import { installMatchers } from "@atsumell/trace-weave/vitest";
 
 installMatchers();
 

@@ -18,7 +18,7 @@ When `verdict === "violated"`, inspect:
 
 ## `formatReport`
 
-Use `trace-weave/ai` when the consumer is another LLM or a UI that needs structured output.
+Use `@atsumell/trace-weave/ai` when the consumer is another LLM or a UI that needs structured output.
 
 ```ts
 const result = runOracle(formula, runtime, trace);
