@@ -10,10 +10,10 @@ export function evaluateStep<TEvent>(state: MonitorState<TEvent>, event: TEvent)
 	state.trace.push(event);
 	state.step++;
 
-	const verdict = evaluateObservedPrefix(state.compiled.document, state.runtime, state.trace);
-	const rootAct = state.activations.get(state.rootActivationId);
-	if (rootAct) {
-		rootAct.verdict = verdict;
-	}
-	return verdict;
+	state.currentVerdict = evaluateObservedPrefix(
+		state.compiled.document,
+		state.runtime,
+		state.trace,
+	);
+	return state.currentVerdict;
 }

@@ -157,10 +157,7 @@ const v2 = evaluateStep(monitor, { type: "response" }); // might be "satisfied"
 
 `evaluateStep` uses prefix semantics over the events observed so far. Open-ended future operators such as `always`, `eventually`, `until`, and `weakNext` often remain `"pending"` until enough evidence arrives or the trace is finalized.
 
-The monitor maintains internal state including:
-- **Activation records** for each node in the formula graph.
-- **Scheduled obligations** for temporal operators that need to check future steps.
-- **Environment frames** for capture/when value correlation.
+Treat `MonitorState` as an opaque handle for the online APIs. The stable fields are the observed `trace`, `step`, `currentVerdict`, and the `finalized` flag; internal caching details are not part of the public contract.
 
 ### Finalizing
 

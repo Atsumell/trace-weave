@@ -2,38 +2,22 @@ import type { FormulaDocument } from "../core/formula-document.js";
 import type { FormulaNode } from "../core/formula-node.js";
 import type { NodeId } from "../core/ids.js";
 import type { MonitorRuntime } from "../core/runtime.js";
-import type { JsonValue, ValueExprArg } from "../core/values.js";
+import type { JsonValue } from "../core/values.js";
 import type { Verdict } from "../core/verdict.js";
 import { andV, impliesV, notV, orV } from "../core/verdict.js";
+import { type EvalEnv, cacheKey, jsonEqual, resolveArg } from "./eval-common.js";
 import { assertTimeSupportForTrace, getTimestamp } from "./time.js";
 
 interface EvalContext<TEvent> {
 	readonly doc: FormulaDocument;
 	readonly runtime: MonitorRuntime<TEvent>;
 	readonly trace: readonly TEvent[];
-	readonly envStack: Map<string, JsonValue>;
+	readonly envStack: EvalEnv;
 	readonly cache: Map<string, Verdict>;
 }
 
-function cacheKey(nodeId: NodeId, pos: number, envKey: string): string {
-	return `${nodeId}:${pos}:${envKey}`;
-}
-
-function envKey(env: Map<string, JsonValue>): string {
-	const entries = [...env.entries()].sort(([a], [b]) => a.localeCompare(b));
-	return JSON.stringify(entries);
-}
-
-function resolveArg<TEvent>(arg: ValueExprArg, event: TEvent, ctx: EvalContext<TEvent>): JsonValue {
-	if (arg.kind === "literal") return arg.value;
-	const selectorFn = ctx.runtime.selectors[arg.selectorId];
-	if (!selectorFn) return null;
-	return selectorFn(event);
-}
-
 function evalNode<TEvent>(ctx: EvalContext<TEvent>, nodeId: NodeId, pos: number): Verdict {
-	const ek = envKey(ctx.envStack);
-	const ck = cacheKey(nodeId, pos, ek);
+	const ck = cacheKey(nodeId, pos, ctx.envStack);
 	const cached = ctx.cache.get(ck);
 	if (cached !== undefined) return cached;
 
@@ -58,7 +42,7 @@ function evalNodeInner<TEvent>(ctx: EvalContext<TEvent>, node: FormulaNode, pos:
 			const event = ctx.trace[pos]!;
 			const predicateFn = ctx.runtime.predicates[node.predicateId];
 			if (!predicateFn) return "violated";
-			const args = (node.args ?? []).map((a) => resolveArg(a, event, ctx));
+			const args = (node.args ?? []).map((arg) => resolveArg(arg, event, ctx.runtime));
 			return predicateFn(event, args) ? "satisfied" : "violated";
 		}
 
@@ -196,28 +180,4 @@ export function evaluateObservedPrefix<TEvent>(
 		cache: new Map(),
 	};
 	return evalNode(ctx, doc.root, 0);
-}
-
-function jsonEqual(a: JsonValue, b: JsonValue): boolean {
-	if (a === b) return true;
-	if (a === null || b === null) return a === b;
-	if (typeof a !== typeof b) return false;
-	if (typeof a !== "object") return a === b;
-	if (Array.isArray(a)) {
-		if (!Array.isArray(b)) return false;
-		if (a.length !== b.length) return false;
-		return a.every((value, i) => jsonEqual(value, b[i]!));
-	}
-	if (Array.isArray(b)) return false;
-	const aObj = a as Record<string, JsonValue>;
-	const bObj = b as Record<string, JsonValue>;
-	const aKeys = Object.keys(aObj);
-	const bKeys = Object.keys(bObj);
-	if (aKeys.length !== bKeys.length) return false;
-	aKeys.sort();
-	bKeys.sort();
-	for (let i = 0; i < aKeys.length; i++) {
-		if (aKeys[i] !== bKeys[i]) return false;
-	}
-	return aKeys.every((key) => jsonEqual(aObj[key]!, bObj[key]!));
 }

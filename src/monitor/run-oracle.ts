@@ -3,6 +3,7 @@ import { print } from "../compiler/printer.js";
 import { validate } from "../compiler/validate.js";
 import type { FormulaExpr } from "../core/formula-expr.js";
 import type { MonitorRuntime } from "../core/runtime.js";
+import { buildCounterexampleReport } from "./diagnostics.js";
 import { evaluateFormula } from "./evaluate.js";
 import type { CounterexampleReport, OracleRunResult } from "./types.js";
 
@@ -21,16 +22,15 @@ export function runOracle<TEvent>(
 
 	const verdict = evaluateFormula(doc, runtime, trace);
 
-	let report: CounterexampleReport | null = null;
-	if (verdict === "violated") {
-		const formulaStr = print(doc);
-		report = {
-			verdict: "violated",
-			failurePath: [],
-			traceSlice: trace.map((event, i) => ({ step: i + 1, event })),
-			summary: `Formula violated: ${formulaStr}`,
-		};
-	}
+	const report: CounterexampleReport | null =
+		verdict === "violated"
+			? (buildCounterexampleReport(doc, runtime, trace) ?? {
+					verdict: "violated",
+					failurePath: [],
+					traceSlice: trace.map((event, i) => ({ step: i + 1, event })),
+					summary: `Formula violated: ${print(doc)}`,
+				})
+			: null;
 
 	return {
 		verdict,

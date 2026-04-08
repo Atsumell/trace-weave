@@ -14,6 +14,12 @@ The AI-agent install guide is in [docs/skills.md](./docs/skills.md).
 - Node.js 20 or later
 - ESM-only package
 
+## Node Support Policy
+
+- `trace-weave` `0.x` supports Node.js 20 or later.
+- Node.js 20 support remains in place through the upstream Node.js 20 end-of-life date, April 30, 2026.
+- After April 30, 2026, a later release may raise the minimum supported version to Node.js 22 or later. Any such change will be called out in the release notes.
+
 ## Installation
 
 ```bash

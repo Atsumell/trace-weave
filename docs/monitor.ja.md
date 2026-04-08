@@ -57,6 +57,8 @@ const monitor = createMonitor(compiled, runtime);
 
 `evaluateStep` は観測済み prefix に対する verdict を返します。`always`、`eventually`、`until`、`weakNext` などの future operator は、証拠が揃うか trace が閉じるまで `"pending"` のまま残ることがあります。
 
+`MonitorState` は online API 用の opaque handle として扱ってください。安定して参照してよいのは `trace`、`step`、`currentVerdict`、`finalized` で、内部キャッシュの詳細は公開契約に含めません。
+
 ### finalize と finalizeEmpty
 
 trace が終わったら `finalize(monitor, lastEvent)` を呼びます。これは完全 trace に対する最終 verdict を batch evaluator と同じ semantics で解決します。

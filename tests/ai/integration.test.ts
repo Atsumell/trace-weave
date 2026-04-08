@@ -53,7 +53,12 @@ describe("ai integration", () => {
 
 		const formatted = formatReport(result.report!, doc);
 		expect(formatted.structured.verdict).toBe("violated");
-		expect(formatted.structured.steps).toEqual([]);
+		expect(formatted.structured.steps).toHaveLength(2);
+		expect(formatted.structured.steps.map((step) => step.label)).toEqual([
+			"All events stay ok",
+			"predicate",
+		]);
+		expect(formatted.structured.steps.map((step) => step.step)).toEqual([0, 1]);
 		expect(formatted.structured.traceSlice).toEqual([
 			{ step: 1, event: { tags: ["ok"] } },
 			{ step: 2, event: { tags: ["bad"] } },

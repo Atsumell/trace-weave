@@ -173,15 +173,8 @@ Compilation, analysis, validation, and printing of formula documents.
 ### Types
 
 ```typescript
-type SweepDirection = "future" | "past" | "none";
-
 interface CompiledFormula {
   readonly document: FormulaDocument;
-  readonly topoOrder: readonly NodeId[];
-  readonly reverseTopoOrder: readonly NodeId[];
-  readonly children: Readonly<Record<NodeId, readonly NodeId[]>>;
-  readonly parents: Readonly<Record<NodeId, readonly NodeId[]>>;
-  readonly sweepDirection: Readonly<Record<NodeId, SweepDirection>>;
 }
 
 interface ValidationError {
@@ -196,7 +189,7 @@ interface ValidationError {
 // Compile a FormulaExpr tree into a FormulaDocument (DAG with content-hashed NodeIds)
 function compile(expr: FormulaExpr): FormulaDocument;
 
-// Prepare a compiled document for online monitoring (topology, parent/child maps)
+// Prepare a compiled document for repeated monitor use
 function prepare(doc: FormulaDocument): CompiledFormula;
 
 // Validate a document for structural errors (capture scoping, bounds)
@@ -243,39 +236,9 @@ interface MonitorState<TEvent> {
   readonly compiled: CompiledFormula;
   readonly runtime: MonitorRuntime<TEvent>;
   step: number;
-  readonly envs: Map<EnvId, EnvFrame>;
-  readonly activations: Map<ActivationId, ActivationRecord>;
-  readonly nodeActivations: Map<NodeId, Set<ActivationId>>;
-  readonly scheduled: ScheduledObligation[];
-  readonly dirtyQueue: DirtyEntry[];
-  rootActivationId: ActivationId;
+  currentVerdict: Verdict;
+  readonly trace: TEvent[];
   finalized: boolean;
-}
-
-interface EnvFrame {
-  readonly id: EnvId;
-  readonly parent: EnvId | null;
-  readonly bindings: Readonly<Record<string, JsonValue>>;
-}
-
-interface ActivationRecord {
-  readonly id: ActivationId;
-  readonly nodeId: NodeId;
-  readonly envId: EnvId;
-  readonly startStep: number;
-  verdict: Verdict;
-  prevVerdict: Verdict;
-}
-
-interface DirtyEntry {
-  readonly nodeId: NodeId;
-  readonly activationId: ActivationId;
-}
-
-interface ScheduledObligation {
-  readonly step: number;
-  readonly nodeId: NodeId;
-  readonly activationId: ActivationId;
 }
 ```
 
