@@ -1,16 +1,15 @@
 import { buildCounterexampleReport } from "./diagnostics.js";
-import type { CounterexampleReport, MonitorState } from "./types.js";
+import type { CounterexampleReport, InternalMonitorState, MonitorState } from "./types.js";
 
 export function buildReport<TEvent>(
 	state: MonitorState<TEvent>,
 	trace: readonly TEvent[],
 ): CounterexampleReport | null {
 	if (state.finalized) {
-		return state.finalReport;
+		return (state as InternalMonitorState<TEvent>).finalReport;
 	}
 
-	const rootAct = state.activations.get(state.rootActivationId);
-	if (!rootAct || rootAct.verdict !== "violated") {
+	if (state.currentVerdict !== "violated") {
 		return null;
 	}
 

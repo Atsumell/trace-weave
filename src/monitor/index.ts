@@ -1,8 +1,4 @@
 export type {
-	EnvFrame,
-	ActivationRecord,
-	DirtyEntry,
-	ScheduledObligation,
 	MonitorState,
 	OracleRunResult,
 	ObligationSnapshot,

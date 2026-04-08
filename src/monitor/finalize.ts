@@ -2,7 +2,7 @@ import { print } from "../compiler/printer.js";
 import type { Verdict } from "../core/verdict.js";
 import { buildCounterexampleReport } from "./diagnostics.js";
 import { evaluateFormula } from "./evaluate.js";
-import type { MonitorState } from "./types.js";
+import type { InternalMonitorState, MonitorState } from "./types.js";
 
 export function finalize<TEvent>(state: MonitorState<TEvent>, lastEvent: TEvent): Verdict {
 	if (state.finalized) {
@@ -29,21 +29,18 @@ export function finalizeEmpty<TEvent>(state: MonitorState<TEvent>): Verdict {
 }
 
 function getFinalizedVerdict<TEvent>(state: MonitorState<TEvent>): Verdict {
-	return state.finalVerdict ?? state.activations.get(state.rootActivationId)?.verdict ?? "pending";
+	const internalState = state as InternalMonitorState<TEvent>;
+	return internalState.finalVerdict ?? state.currentVerdict;
 }
 
 function finalizeObservedTrace<TEvent>(state: MonitorState<TEvent>): Verdict {
+	const internalState = state as InternalMonitorState<TEvent>;
 	state.finalized = true;
 
 	const verdict = evaluateFormula(state.compiled.document, state.runtime, state.trace);
-	state.finalVerdict = verdict;
-
-	const rootAct = state.activations.get(state.rootActivationId);
-	if (rootAct) {
-		rootAct.verdict = verdict;
-	}
-
-	state.finalReport =
+	state.currentVerdict = verdict;
+	internalState.finalVerdict = verdict;
+	internalState.finalReport =
 		verdict === "violated"
 			? (buildCounterexampleReport(state.compiled.document, state.runtime, state.trace) ?? {
 					verdict: "violated",
@@ -53,5 +50,5 @@ function finalizeObservedTrace<TEvent>(state: MonitorState<TEvent>): Verdict {
 				})
 			: null;
 
-	return rootAct?.verdict ?? verdict;
+	return verdict;
 }
