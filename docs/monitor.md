@@ -119,12 +119,24 @@ const result = runOracle(always(predicate(isOk)), runtime, trace);
 
 if (result.verdict === "violated") {
   console.log(result.report!.summary);
-  // "Formula violated."
+  // "Formula violated: G isOk at position 1 (step 2) while checking isOk"
 
   for (const event of result.report!.traceSlice) {
     console.log(`Step ${event.step}: ${JSON.stringify(event.event)}`);
   }
 }
+```
+
+### Root Position Semantics
+
+Batch evaluation starts at the root node, position `0`. A bare predicate or any other non-temporal formula is therefore a statement about the current position only.
+
+```typescript
+runOracle(predicate(isError), runtime, trace);
+// checks only trace[0]
+
+runOracle(eventually(predicate(isError)), runtime, trace);
+// checks whether any position satisfies isError
 ```
 
 ---
@@ -198,6 +210,23 @@ if (report) {
   console.log(report.summary);
 }
 ```
+
+### Async Test Harness Tips
+
+trace-weave records and evaluates synchronously. If your test harness feeds events from subscriptions, microtasks, actors, hooks, or timer callbacks, flush that scheduler before asserting on the trace.
+
+- Real timers or promise-driven code: await the microtasks or framework tick that delivers the event before calling `runOracle`, `finalize`, or `expect(...).toSatisfy(...)`.
+- Fake timers: advance timers first, then flush microtasks scheduled by those timer callbacks, then assert.
+- Treat the recorder or monitor as the synchronous sink. The async boundary lives in your harness, not inside trace-weave.
+
+Typical Vitest recipe:
+
+```typescript
+await vi.runAllTimersAsync();
+await Promise.resolve();
+```
+
+For code that does not use fake timers, a plain `await Promise.resolve()` or framework-specific flush helper is usually enough.
 
 ---
 

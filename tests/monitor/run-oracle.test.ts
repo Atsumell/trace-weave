@@ -350,7 +350,9 @@ describe("runOracle", () => {
 			expect(result.verdict).toBe("violated");
 			expect(result.report).not.toBeNull();
 			expect(result.report?.verdict).toBe("violated");
-			expect(result.report?.summary).toContain("violated");
+			expect(result.report?.summary).toContain("Formula violated: G isA");
+			expect(result.report?.summary).toContain("position 1 (step 2)");
+			expect(result.report?.summary).toContain("checking isA");
 		});
 
 		it("no report on satisfaction", () => {

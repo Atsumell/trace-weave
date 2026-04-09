@@ -38,9 +38,11 @@ Timestamp rules:
 - no value reads: predicates only
 - value correlation: predicates + selectors
 - millisecond deadlines: predicates + timestamp, selectors only if needed
+- bare predicates are current-position checks; use `eventually(...)` for "somewhere in the trace"
 
 ## Test-writing defaults
 
 - use `runOracle(formula, runtime, trace)` for unit tests
 - build small inline runtimes inside the test file unless a shared helper already exists
 - keep event fixtures compact and explicit
+- if events arrive through async subscriptions or timers, flush that scheduler before asserting

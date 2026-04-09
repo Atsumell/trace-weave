@@ -41,6 +41,13 @@ export function literal(value: boolean): LiteralExpr {
 	return { kind: "literal", value };
 }
 
+/**
+ * Point assertion at the current trace position.
+ *
+ * When used as the root formula, this checks only position 0 of the trace.
+ * Wrap it with `eventually(...)` to ask whether the predicate appears anywhere
+ * in the trace, or with `always(...)` to require it at every position.
+ */
 export function predicate(
 	predicateId: PredicateId,
 	...args: readonly ValueExprArg[]

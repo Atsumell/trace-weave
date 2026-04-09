@@ -1,4 +1,4 @@
-import { print } from "../compiler/printer.js";
+import { print, printNodeAt } from "../compiler/printer.js";
 import type { FormulaDocument } from "../core/formula-document.js";
 import type { FormulaNode } from "../core/formula-node.js";
 import { type ActivationId, type NodeId, activationId } from "../core/ids.js";
@@ -34,8 +34,28 @@ export function buildCounterexampleReport<TEvent>(
 		verdict: "violated",
 		failurePath,
 		traceSlice: trace.map((event, i) => ({ step: i + 1, event })),
-		summary: `Formula violated: ${print(doc)}`,
+		summary: buildViolationSummary(doc, trace, failurePath),
 	};
+}
+
+function buildViolationSummary<TEvent>(
+	doc: FormulaDocument,
+	trace: readonly TEvent[],
+	failurePath: readonly ObligationSnapshot[],
+): string {
+	const renderedFormula = print(doc);
+	const terminal = failurePath.at(-1);
+	if (!terminal) {
+		return `Formula violated: ${renderedFormula}`;
+	}
+
+	const focusedObligation = printNodeAt(terminal.nodeId, doc);
+	const traceEntry = trace[terminal.step];
+	if (traceEntry === undefined) {
+		return `Formula violated: ${renderedFormula} at trace end (position ${terminal.step}) while checking ${focusedObligation}`;
+	}
+
+	return `Formula violated: ${renderedFormula} at position ${terminal.step} (step ${terminal.step + 1}) while checking ${focusedObligation}`;
 }
 
 function collectFailurePath<TEvent>(

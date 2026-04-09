@@ -78,6 +78,18 @@ const amount = selectorId("amount");
 predicate(gt, current(amount), value(100));
 ```
 
+#### Current-Position Semantics
+
+A bare predicate is a **point assertion**. trace-weave starts evaluation at the root node, position `0`, so a top-level `predicate(isError)` checks only the first event in the trace.
+
+```typescript
+predicate(isError);              // "the first event is an error"
+eventually(predicate(isError));  // "some event is an error"
+always(predicate(isError));      // "every event is an error"
+```
+
+This also applies to any non-temporal sub-formula: if you want "somewhere in the trace", wrap it in `eventually(...)`.
+
 ---
 
 ## Boolean Operators

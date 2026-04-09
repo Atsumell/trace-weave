@@ -54,7 +54,7 @@ interface TraceConfig<TEvent> {
 
 ## traceProperty
 
-Creates a fast-check property that runs the oracle on each generated trace. If the formula is violated, the property throws an error with the counterexample report.
+Creates a fast-check property that runs the oracle on each generated trace. If the formula is violated, the property throws an error with the failure position, focused obligation, and trace dump.
 
 ```typescript
 import * as fc from "fast-check";
@@ -169,6 +169,31 @@ interface CommandAdapterConfig<TModel extends object, TReal> {
   readonly initialReal: () => TReal;
 }
 ```
+
+### Per-Run Isolation
+
+`initialReal()` runs once per fast-check execution and should return a fully isolated real system. Use it to reset or recreate any state that might leak between runs:
+
+- fake timers
+- global mocks such as shared WebSocket instances
+- singleton stores or registries
+- module-level arrays used for observation
+
+If your commands depend on globals, reset them inside `initialReal()` so every property run starts from a clean baseline.
+
+```typescript
+const traceFromCommands = commandAdapter({
+  commands,
+  initialModel: () => ({ count: 0 }),
+  initialReal: () => {
+    vi.clearAllTimers();
+    mockWsInstances.length = 0;
+    return createRealSystem();
+  },
+});
+```
+
+This is a testing-harness concern rather than a trace-weave semantic rule, but documenting it in the adapter setup prevents cross-run contamination.
 
 ---
 

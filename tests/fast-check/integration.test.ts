@@ -149,7 +149,18 @@ describe("fast-check integration", () => {
 		});
 
 		expect(() => fc.assert(passing, { numRuns: 1 })).not.toThrow();
-		expect(() => fc.assert(failing, { numRuns: 1 })).toThrowError(/Formula violated/);
+		let failureMessage = "";
+		try {
+			fc.assert(failing, { numRuns: 1 });
+		} catch (error) {
+			failureMessage = error instanceof Error ? error.message : String(error);
+		}
+
+		expect(failureMessage).toContain("Formula violated: G isOk");
+		expect(failureMessage).toContain("position 1 (step 2)");
+		expect(failureMessage).toContain('Observed event at step 2: {"tags":["bad"]}');
+		expect(failureMessage).toContain("Failure path:");
+		expect(failureMessage).toContain("Trace:");
 	});
 
 	it("commandProperty forwards traces through the same oracle semantics", () => {
@@ -163,6 +174,6 @@ describe("fast-check integration", () => {
 		const formula = always(predicate(isOk));
 		const property = commandProperty(formula, runtime, fc.constant([{ tags: ["bad"] }]));
 
-		expect(() => fc.assert(property, { numRuns: 1 })).toThrowError(/Formula violated/);
+		expect(() => fc.assert(property, { numRuns: 1 })).toThrowError(/Observed event at step 1/);
 	});
 });

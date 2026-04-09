@@ -1,6 +1,8 @@
 import * as fc from "fast-check";
+import { compile } from "../compiler/compile.js";
 import type { FormulaExpr } from "../core/formula-expr.js";
 import type { MonitorRuntime } from "../core/runtime.js";
+import { formatCounterexampleMessage } from "../monitor/format-message.js";
 import { runOracle } from "../monitor/run-oracle.js";
 
 export interface TracePropertyConfig<TEvent> {
@@ -12,10 +14,14 @@ export interface TracePropertyConfig<TEvent> {
 export function traceProperty<TEvent>(
 	config: TracePropertyConfig<TEvent>,
 ): fc.IPropertyWithHooks<[TEvent[]]> {
+	const doc = compile(config.formula);
+
 	return fc.property(config.traceArbitrary, (trace) => {
 		const result = runOracle(config.formula, config.runtime, trace);
 		if (result.verdict === "violated") {
-			const msg = result.report?.summary ?? "Formula violated";
+			const msg = result.report
+				? formatCounterexampleMessage(result.report, doc)
+				: "Formula violated";
 			throw new Error(msg);
 		}
 	});

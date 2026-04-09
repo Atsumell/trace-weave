@@ -16,13 +16,13 @@ function needsParens(node: FormulaNode): boolean {
 	}
 }
 
-function printNode(nid: NodeId, doc: FormulaDocument): string {
+export function printNodeAt(nid: NodeId, doc: FormulaDocument): string {
 	const node = doc.nodes[nid];
 	if (!node) return `<unknown:${nid}>`;
 
 	function child(cid: NodeId): string {
 		const cnode = doc.nodes[cid];
-		const s = printNode(cid, doc);
+		const s = printNodeAt(cid, doc);
 		return cnode && needsParens(cnode) ? `(${s})` : s;
 	}
 
@@ -71,5 +71,5 @@ function printNode(nid: NodeId, doc: FormulaDocument): string {
 }
 
 export function print(doc: FormulaDocument): string {
-	return printNode(doc.root, doc);
+	return printNodeAt(doc.root, doc);
 }

@@ -33,9 +33,19 @@ describe("vitest matchers", () => {
 	});
 
 	it("surfaces informative matcher messages on failure", () => {
-		expect(() => expect([{ tags: ["bad"] }]).toSatisfy(formula, runtime)).toThrowError(
-			/got verdict: violated/,
-		);
+		let satisfyMessage = "";
+		try {
+			expect([{ tags: ["bad"] }]).toSatisfy(formula, runtime);
+		} catch (error) {
+			satisfyMessage = error instanceof Error ? error.message : String(error);
+		}
+
+		expect(satisfyMessage).toContain("got verdict: violated");
+		expect(satisfyMessage).toContain("position 0 (step 1)");
+		expect(satisfyMessage).toContain('Observed event at step 1: {"tags":["bad"]}');
+		expect(satisfyMessage).toContain("Failure path:");
+		expect(satisfyMessage).toContain("Trace:");
+
 		expect(() => expect([{ tags: ["ok"] }]).toViolate(formula, runtime)).toThrowError(
 			/got verdict: satisfied/,
 		);

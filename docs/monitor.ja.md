@@ -41,6 +41,18 @@ interface OracleRunResult {
 
 `verdict === "violated"` のときは `report` に failure path、trace slice、summary が入ります。テストコードからは通常この API を使うのが自然です。
 
+### Root Position Semantics
+
+batch 評価は root node の position `0` から始まります。したがって bare predicate や non-temporal な部分式は、常に「現在位置だけ」に対する主張です。
+
+```typescript
+runOracle(predicate(isError), runtime, trace);
+// trace[0] だけを確認する
+
+runOracle(eventually(predicate(isError)), runtime, trace);
+// どこかの position で isError が成り立つかを確認する
+```
+
 ## Online Monitoring
 
 streaming や長寿命プロセス向けに、増分評価 API もあります。
@@ -64,6 +76,21 @@ const monitor = createMonitor(compiled, runtime);
 trace が終わったら `finalize(monitor, lastEvent)` を呼びます。これは完全 trace に対する最終 verdict を batch evaluator と同じ semantics で解決します。
 
 真に空の trace を評価したい場合は `finalizeEmpty(monitor)` を使います。`finalize()` は後方互換のため、空 monitor に対して呼ばれた場合でも `lastEvent` から 1 要素 trace を materialize します。
+
+### Async Test Harness の注意点
+
+trace-weave 自体の record / evaluation は同期的です。一方で、subscription、microtask、actor、hook、timer callback 経由で trace を流し込む harness では、その scheduler を flush してから assertion してください。
+
+- 実 timer や promise ベースの処理では、イベント配送を行う microtask や framework の tick を待ってから `runOracle`、`finalize`、`toSatisfy` を呼ぶ
+- fake timer では、まず timer を進め、その callback が積んだ microtask を flush してから assertion する
+- recorder / monitor は同期 sink と考え、非同期境界は harness 側で制御する
+
+Vitest では次の順序が基本です。
+
+```typescript
+await vi.runAllTimersAsync();
+await Promise.resolve();
+```
 
 ## Trace End Semantics
 

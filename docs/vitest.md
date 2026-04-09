@@ -80,11 +80,21 @@ it("all events are ok", () => {
 });
 ```
 
-On failure, the error message includes the verdict and the counterexample report summary:
+On failure, the error message includes the verdict, the focused failing obligation, the failing event, and the trace dump:
 
 ```
 Expected trace to satisfy formula, but got verdict: violated
-Formula violated.
+Formula violated: G isOk at position 1 (step 2) while checking isOk
+Focused obligation: isOk
+Observed event at step 2: {"type":"bad"}
+
+Failure path:
+- position 0: G isOk => violated
+- position 1: isOk => violated
+
+Trace:
+- step 1: {"type":"ok"}
+- step 2: {"type":"bad"}
 ```
 
 ### toViolate(formula, runtime)
@@ -101,8 +111,23 @@ it("trace contains a non-ok event", () => {
 On failure:
 
 ```
-Expected trace to violate formula, but got verdict: satisfied
+Expected trace to violate formula G isOk, but got verdict: satisfied
 ```
+
+### Async Trace Sources
+
+The matcher itself is synchronous. If your trace is filled from subscriptions, hooks, actors, or timer callbacks, flush that scheduler before calling `expect(...).toSatisfy(...)`.
+
+Typical Vitest pattern with fake timers:
+
+```typescript
+await vi.runAllTimersAsync();
+await Promise.resolve();
+
+expect(trace).toSatisfy(formula, runtime);
+```
+
+For promise-only code, `await Promise.resolve()` or your framework's own flush helper is usually enough.
 
 ---
 
