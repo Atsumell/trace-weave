@@ -50,4 +50,11 @@ describe("vitest matchers", () => {
 			/got verdict: satisfied/,
 		);
 	});
+
+	it("keeps matcher failures readable for circular events", () => {
+		const circular = { tags: ["bad"] } as TestEvent & { self?: unknown };
+		circular.self = circular;
+
+		expect(() => expect([circular]).toSatisfy(formula, runtime)).toThrowError(/\[Circular\]/);
+	});
 });

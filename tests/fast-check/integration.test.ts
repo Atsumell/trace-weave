@@ -176,4 +176,15 @@ describe("fast-check integration", () => {
 
 		expect(() => fc.assert(property, { numRuns: 1 })).toThrowError(/Observed event at step 1/);
 	});
+
+	it("traceProperty keeps BigInt events readable in failure output", () => {
+		const formula = always(predicate(isOk));
+		const property = traceProperty({
+			formula,
+			runtime,
+			traceArbitrary: fc.constant([{ tags: ["bad"], count: 1n } as TestEvent]),
+		});
+
+		expect(() => fc.assert(property, { numRuns: 1 })).toThrowError(/"count":"1n"/);
+	});
 });

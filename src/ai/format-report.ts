@@ -1,4 +1,5 @@
 import type { FormulaDocument } from "../core/formula-document.js";
+import { safeStringify } from "../core/safe-stringify.js";
 import type { CounterexampleReport } from "../monitor/types.js";
 import { getNodeLabel } from "./metadata.js";
 
@@ -37,7 +38,7 @@ export function formatReport(report: CounterexampleReport, doc: FormulaDocument)
 		...steps.map((s) => `  [step ${s.step}] ${s.label} (${s.nodeId}): ${s.verdict}`),
 		"",
 		"Trace:",
-		...report.traceSlice.map((t) => `  step ${t.step}: ${JSON.stringify(t.event)}`),
+		...report.traceSlice.map((t) => `  step ${t.step}: ${safeStringify(t.event)}`),
 		"",
 		report.summary,
 	];

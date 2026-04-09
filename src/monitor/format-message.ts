@@ -1,11 +1,7 @@
 import { printNodeAt } from "../compiler/printer.js";
 import type { FormulaDocument } from "../core/formula-document.js";
+import { safeStringify } from "../core/safe-stringify.js";
 import type { CounterexampleReport } from "./types.js";
-
-function stringifyEvent(value: unknown): string {
-	const json = JSON.stringify(value);
-	return json ?? String(value);
-}
 
 export function formatCounterexampleMessage(
 	report: CounterexampleReport,
@@ -23,7 +19,7 @@ export function formatCounterexampleMessage(
 
 		const traceEntry = report.traceSlice[terminal.step];
 		if (traceEntry) {
-			lines.push(`Observed event at step ${traceEntry.step}: ${stringifyEvent(traceEntry.event)}`);
+			lines.push(`Observed event at step ${traceEntry.step}: ${safeStringify(traceEntry.event)}`);
 		} else {
 			lines.push("Failure point is at trace end; no event exists at that position.");
 		}
@@ -40,7 +36,7 @@ export function formatCounterexampleMessage(
 		lines.push("");
 		lines.push("Trace:");
 		for (const entry of report.traceSlice) {
-			lines.push(`- step ${entry.step}: ${stringifyEvent(entry.event)}`);
+			lines.push(`- step ${entry.step}: ${safeStringify(entry.event)}`);
 		}
 	}
 

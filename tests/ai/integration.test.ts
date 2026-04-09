@@ -67,4 +67,36 @@ describe("ai integration", () => {
 		expect(formatted.text).toContain("Failure Path:");
 		expect(formatted.text).toContain("Trace:");
 	});
+
+	it("formats circular and BigInt events without throwing", () => {
+		const formula = annotate(always(predicate(isOk)), {
+			humanLabel: "All events stay ok",
+		});
+		const doc = compile(formula);
+		const circular = { tags: ["bad"] } as TestEvent & { self?: unknown };
+		circular.self = circular;
+
+		const formatted = formatReport(
+			{
+				verdict: "violated",
+				failurePath: [
+					{
+						nodeId: doc.root,
+						activationId: "activation-1" as import("../../src/core/ids.js").ActivationId,
+						verdict: "violated",
+						step: 1,
+					},
+				],
+				traceSlice: [
+					{ step: 1, event: circular },
+					{ step: 2, event: { tags: ["bad"], count: 1n } },
+				],
+				summary: "Formula violated: G isOk",
+			},
+			doc,
+		);
+
+		expect(formatted.text).toContain("[Circular]");
+		expect(formatted.text).toContain('"count":"1n"');
+	});
 });
