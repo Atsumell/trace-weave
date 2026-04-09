@@ -1,6 +1,6 @@
 {
 	"name": "trace-weave-test-author",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"entry": "SKILL.md",
 	"targetAgents": ["codex", "claude-code"],
 	"traceWeaveCompatibility": "^0.1.0",

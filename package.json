@@ -1,6 +1,6 @@
 {
 	"name": "@atsumell/trace-weave",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Finite-trace temporal test oracle framework based on LTLf",
 	"repository": {
 		"type": "git",
